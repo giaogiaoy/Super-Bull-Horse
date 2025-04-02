@@ -21,13 +21,18 @@ const router = createRouter({
     {
       path: '/layout',   //主页
       name: 'layout',
-      component: () => import('@/views/Layout/Layout.vue'),
+      component: () => import('@/views/Layout/LayoutView.vue'),
       children:[
         {
           path: '/layout/home', //首页
           name: 'home',
           component: () => import('@/views/Layout/Home/Home.vue'),
         },
+        {
+          path:'/layout/video',   //监控视频'
+          name:'video',
+          component: () => import('@/views/Layout/Video surveillance/VideoView.vue'),
+        }
       ]
     },
     {
