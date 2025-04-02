@@ -11,17 +11,17 @@ const router = createRouter({
     {
       path: '/login',   //登录
       name: 'login',
-      component: ()=> import('@/views/Login.vue'),
+      component: ()=> import('@/views/LoginView.vue'),
     },
     {
       path: '/registration',   //注册
       name: 'registration',
-      component: () => import('@/views/Registration.vue'),
+      component: () => import('@/views/RegistrationView.vue'),
     },
     {
       path: '/layout',   //主页
       name: 'layout',
-      component: () => import('@/views/Layout/Layout.vue'),
+      component: () => import('@/views/Layout/LayoutView.vue'),
       children:[
         {
           path: '/layout/home', //首页
