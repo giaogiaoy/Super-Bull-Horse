@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
-
+var fs = require('fs')
+var multiparty = require('multiparty');
+var xlsx = require("node-xlsx").default;
+const jwt = require('jsonwebtoken');
+const {}  = require('../db/index')
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
 
 module.exports = router;
