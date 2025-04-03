@@ -1,11 +1,24 @@
 var express = require('express');
 var router = express.Router();
-var {  } = require('../MGdb/mgdb');
+var { CAModel } = require('../MGdb/mgdb');
 var { jwt } = require('jsonwebtoken');
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+// 获取活动
+router.get('/getCAlist', async(req, res) => {
+  let { page, size } = req.query;
+  let data = await CAModel.find()
+  .limit(Number(size))
+  .skip((Number(page) - 1) * Number(size));
+
+  let total = await CAModel.countDocuments();
+  
+  res.send({
+    code: 200,
+    msg: '获取成功',
+    data,
+    total
+  })
 });
+
 
 module.exports = router;

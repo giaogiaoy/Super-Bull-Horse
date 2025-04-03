@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted, watchEffect } from 'vue'
+import axios from 'axios'
+axios.defaults.baseURL = 'http://localhost:3000'
 import { useRoute, useRouter } from 'vue-router'
 let router = useRouter()
 let route = useRoute()
+import dayjs from 'dayjs'
 
 let activename = ref('') //活动名称
 let singupstate = ref('') //报名状态
@@ -12,16 +15,58 @@ let select1 = ref('')
 let select2 = ref('')
 let select3 = ref('')
 
-watchEffect( () => {
+//事件监听
+watchEffect(() => {
   singupstate.value = select1.value
   activestate.value = select2.value
-  reviewstate.value = select3.value
+ reviewstate.value = select3.value
 })
 
-// 搜索查询
-const handleSearch = () => {
+let CAList = ref([]) //活动列表
+let NowPage = reactive({ //分页器
+  page: 1,
+  size: 3,
+  total: 0,
+})
+// 获取活动列表
+let getCAList = async () => {
+  let params = {
+    page: NowPage.page,
+    size: NowPage.size,
+  }
+  let res = await axios.get('/getCAlist', { params })
+  if (res.data.code === 200) {
+    console.log(res.data.data)
 
+    CAList.value = res.data.data
+    NowPage.total = res.data.total
+  }
 }
+
+//页面挂载
+onMounted(() => {
+  getCAList()
+  console.log(CAList.value)
+})
+
+const handleSizeChange = (val: number) => {
+  NowPage.size = val
+  getCAList()
+}
+const handleCurrentChange = (val: number) => {
+  NowPage.page = val
+  getCAList()
+}
+
+// 格式化日期
+const formatDate = (date: string | Date, format = 'YYYY-MM-DD HH:mm') => {
+  return dayjs(date).format(format)
+}
+
+// 搜索查询
+const handleSearch = () => {}
+
+
 </script>
 
 <template>
@@ -38,7 +83,11 @@ const handleSearch = () => {
               <el-option style="width: 100px; text-align: center" label="全部" value="" />
               <el-option style="width: 100px; text-align: center" label="未发布" value="未发布" />
               <el-option style="width: 100px; text-align: center" label="报名中" value="报名中" />
-              <el-option style="width: 100px; text-align: center" label="报名结束" value="报名结束" />
+              <el-option
+                style="width: 100px; text-align: center"
+                label="报名结束"
+                value="报名结束"
+              />
             </el-select>
           </template>
         </el-input>
@@ -68,34 +117,44 @@ const handleSearch = () => {
         <el-button color="#169BD5" @click="handleSearch">新增</el-button>
       </el-header>
       <el-main>
-        <!-- <el-table
-    :data="tableData"
-    :border="parentBorder"
-    :preserve-expanded-content="preserveExpanded"
-    style="width: 100%"
-  >
-    <el-table-column type="expand">
-      <template #default="props">
-        <div m="4">
-          <p m="t-0 b-2">State: {{ props.row.state }}</p>
-          <p m="t-0 b-2">City: {{ props.row.city }}</p>
-          <p m="t-0 b-2">Address: {{ props.row.address }}</p>
-          <p m="t-0 b-2">Zip: {{ props.row.zip }}</p>
-          <h3>Family</h3>
-          <el-table :data="props.row.family" :border="childBorder">
-            <el-table-column label="Name" prop="name" />
-            <el-table-column label="State" prop="state" />
-            <el-table-column label="City" prop="city" />
-            <el-table-column label="Address" prop="address" />
-            <el-table-column label="Zip" prop="zip" />
-          </el-table>
-        </div>
-      </template>
-    </el-table-column>
-    <el-table-column label="Date" prop="date" />
-    <el-table-column label="Name" prop="name" />
-  </el-table> -->
+        <el-table
+          :data="CAList"
+          :border="false"
+          :preserve-expanded-content="false"
+          style="width: 100%"
+          stripe
+        >
+          <el-table-column type="expand">
+            <!-- <template #default="props">
+              <div>
 
+              </div>
+            </template> -->
+          </el-table-column>
+          <el-table-column label="活动名称" prop="activeName" />
+          <el-table-column label="报名时间" >
+            <template #default="scope">
+              {{ formatDate(scope.row.singupState)+'至'+formatDate(scope.row.singupEnd) }}
+              </template>
+          </el-table-column>
+          <el-table-column label="人数限制" >
+            <template #default="scope">
+              {{ scope.row.singupNum?scope.row.singupNum:'无限制' }}
+              </template>
+          </el-table-column>
+          <el-table-column label="已报名人数" prop="singupNumNow" />
+        </el-table>
+        <el-pagination
+          :current-page="NowPage.page"
+          :page-size="NowPage.size"
+          :page-sizes="[3, 5, 10, 15]"
+          :disabled="false"
+          :background="false"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="NowPage.total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
       </el-main>
     </el-container>
   </div>
@@ -108,8 +167,8 @@ const handleSearch = () => {
 }
 .communityactivities {
   background: #f0f3f8;
-  width: 100vw;
-  height: 100vh;
+  min-width: 1300px;
+  max-width: 1350px;
 }
 .el-header .el-input {
   margin-right: 10px;
@@ -117,7 +176,7 @@ const handleSearch = () => {
 .el-header.el-select {
   margin-right: 10px;
 }
-.el-header .el-button{
+.el-header .el-button {
   width: 70px;
 }
 .communityactivities .el-header {
@@ -132,7 +191,7 @@ const handleSearch = () => {
   background-color: white;
   margin-top: 10px;
   box-shadow: 0 5px 12px 0 rgba(0, 0, 0, 0.1);
-  height: 90vh;
+  height: 70vh;
   padding: 15px 10px;
 }
 </style>
