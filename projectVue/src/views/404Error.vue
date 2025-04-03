@@ -1,6 +1,6 @@
 <template>
   <div class="about">
-    <h1>404错误</h1>
+    <h1>404错误!</h1>
   </div>
 </template>
 
