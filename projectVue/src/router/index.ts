@@ -28,6 +28,11 @@ const router = createRouter({
           name: 'home',
           component: () => import('@/views/Layout/Home/Home.vue'),
         },
+        {
+          path:'/layout/communityactivities',  //社区活动
+          name:'communityactivities',
+          component: () => import('@/views/Layout/Content Management/CommunityActivities.vue'),
+        },
       ]
     },
     {
