@@ -19,11 +19,12 @@ let select3 = ref('')
 watchEffect(() => {
   singupstate.value = select1.value
   activestate.value = select2.value
- reviewstate.value = select3.value
+  reviewstate.value = select3.value
 })
 
 let CAList = ref([]) //活动列表
-let NowPage = reactive({ //分页器
+let NowPage = reactive({
+  //分页器
   page: 1,
   size: 3,
   total: 0,
@@ -63,8 +64,18 @@ const formatDate = (date: string | Date, format = 'YYYY-MM-DD HH:mm') => {
   return dayjs(date).format(format)
 }
 
+// 新增活动
+const handleAdd = () => {}
 // 搜索查询
 const handleSearch = () => {}
+// 编辑活动
+const handleEdit = (row: any) => {}
+// 删除活动
+const handleDelete = (row: any) => {}
+// 审核活动
+const handleReviewer = (row: any) => {}
+// 终止报名
+const handleIsEnd = (row: any) => {}
 
 
 </script>
@@ -114,35 +125,140 @@ const handleSearch = () => {}
           </template>
         </el-input>
         <el-button color="#169BD5" @click="handleSearch">查询</el-button>
-        <el-button color="#169BD5" @click="handleSearch">新增</el-button>
+        <el-button color="#169BD5" @click="handleAdd">新增</el-button>
       </el-header>
       <el-main>
         <el-table
           :data="CAList"
           :border="false"
           :preserve-expanded-content="false"
+          height="500"
           style="width: 100%"
           stripe
+          class="ActiveTable"
         >
           <el-table-column type="expand">
-            <!-- <template #default="props">
-              <div>
-
+            <template #default="props">
+              <div class="ActiveDesc">
+                <h2>活动详情</h2>
+                <br />
+                <div class="activedesc-item">
+                  <h4>所属社区</h4>
+                  &emsp;
+                  <p>{{ props.row.AboutCommunity }}</p>
+                </div>
+                <div class="activedesc-item">
+                  <h4>活动名称</h4>
+                  &emsp;
+                  <p>{{ props.row.activeName }}</p>
+                </div>
+                <div class="activedesc-item">
+                  <h4>报名时间</h4>
+                  &emsp;
+                  <p>
+                    {{ formatDate(props.row.singupState) + '至' + formatDate(props.row.singupEnd) }}
+                  </p>
+                </div>
+                <div class="activedesc-item">
+                  <h4>活动时间</h4>
+                  &emsp;
+                  <p>
+                    {{ formatDate(props.row.activestate) + '至' + formatDate(props.row.activeEnd) }}
+                  </p>
+                </div>
+                <div class="activedesc-item">
+                  <h4>限制人数</h4>
+                  &emsp;
+                  <p>{{ props.row.singupNum ? props.row.singupNum : '无限制' }}</p>
+                </div>
+                <div class="activedesc-item">
+                  <h4>活动图片</h4>
+                  &emsp;
+                  <el-image :src="props.row.activeImg" lazy />
+                </div>
+                <div class="activedesc-item">
+                  <h4>活动内容</h4>
+                  &emsp;
+                  <p>{{ props.row.activeContent }}</p>
+                </div>
+                <div class="activedesc-item">
+                  <h4>活动地址</h4>
+                  &emsp;
+                  <p>{{ props.row.activeAddress }}</p>
+                </div>
+                <div class="activedesc-item">
+                  <h4>附件</h4>
+                  &emsp;
+                  <p>bhbhjbhjbhjbjbhjbjbjbjbjbjjhkjbkbkjnj,bjbjbbb</p>
+                </div>
+                <hr />
+                <div class="activedesc-item">
+                  <h4>创建人</h4>
+                  &emsp;
+                  <p>{{ props.row.Creator }}</p>
+                </div>
+                <div class="activedesc-item">
+                  <h4>创建时间</h4>
+                  &emsp;
+                  <p>{{ formatDate(props.row.CreateState) }}</p>
+                </div>
+                <div class="activedesc-item">
+                  <h4>已报名人数</h4>
+                  &emsp;
+                  <p>{{ props.row.singupNumNow }}</p>
+                </div>
               </div>
-            </template> -->
+            </template>
           </el-table-column>
-          <el-table-column label="活动名称" prop="activeName" />
-          <el-table-column label="报名时间" >
+          <el-table-column label="活动名称" prop="activeName" width="120"/>
+          <el-table-column label="报名时间" width="190">
             <template #default="scope">
-              {{ formatDate(scope.row.singupState)+'至'+formatDate(scope.row.singupEnd) }}
-              </template>
+              {{ formatDate(scope.row.singupState) + '至' + formatDate(scope.row.singupEnd) }}
+            </template>
           </el-table-column>
-          <el-table-column label="人数限制" >
+          <el-table-column label="人数限制" width="120">
             <template #default="scope">
-              {{ scope.row.singupNum?scope.row.singupNum:'无限制' }}
-              </template>
+              {{ scope.row.singupNum ? scope.row.singupNum : '无限制' }}
+            </template>
           </el-table-column>
-          <el-table-column label="已报名人数" prop="singupNumNow" />
+          <el-table-column label="已报名人数" prop="singupNumNow" width="120"/>
+          <el-table-column label="创建人" prop="Creator" width="120"/>
+          <el-table-column label="创建时间" width="180">
+            <template #default="scope">
+              {{ formatDate(scope.row.CreateState) }}
+            </template>
+          </el-table-column>
+          <el-table-column label="审核人" prop="Reviewer" width="120"/>
+          <el-table-column label="审核状态" width="120">
+            <template #default="scope">
+              <el-tag v-if="scope.row.ReviewerState === 1" type="warning" effect="dark">审核中</el-tag>
+              <el-tag v-else-if="scope.row.ReviewerState === 2" type="success" effect="dark">已通过</el-tag>
+              <el-tag v-else-if="scope.row.ReviewerState === 3" type="danger" effect="dark">已驳回</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="报名状态" width="120">
+            <template #default="scope">
+              <el-tag v-if="new Date(scope.row.singupState).getTime() > Date.now()" type="warning">未发布</el-tag>
+              <el-tag v-else-if="Date.now() < new Date(scope.row.singupEnd).getTime()" type="success">报名中</el-tag>
+              <el-tag v-else-if="Date.now() > new Date(scope.row.singupEnd).getTime() || scope.row.isEnd" type="danger">报名结束</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="活动状态" width="120">
+            <template #default="scope">
+              <el-tag v-if="new Date(scope.row.activeState).getTime() > Date.now()" type="warning" effect="plain">未开始</el-tag>
+              <el-tag v-else-if="Date.now() < new Date(scope.row.activeEnd).getTime()" type="success" effect="plain">进行中</el-tag>
+              <el-tag v-else-if="Date.now() > new Date(scope.row.activeEnd).getTime()" type="danger" effect="plain">已结束</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" fixed="right" min-width="210">
+            <template #default="scope">
+              <el-button type="text" @click="handleEdit(scope.row)">编辑</el-button>
+              <el-button type="text" @click="handleDelete(scope.row)">删除</el-button>
+              <el-button type="text" @click="handleReviewer(scope.row)">审核</el-button>
+              <el-button v-if="Date.now() < new Date(scope.row.singupEnd).getTime() && !scope.row.isEnd" type="text"
+               @click="handleIsEnd(scope.row)">终止报名</el-button>
+            </template>
+          </el-table-column>
         </el-table>
         <el-pagination
           :current-page="NowPage.page"
@@ -170,13 +286,13 @@ const handleSearch = () => {}
   min-width: 1300px;
   max-width: 1350px;
 }
-.el-header .el-input {
+.communityactivities .el-header .el-input {
   margin-right: 10px;
 }
-.el-header.el-select {
+.communityactivities .el-header.el-select {
   margin-right: 10px;
 }
-.el-header .el-button {
+.communityactivities .el-header .el-button {
   width: 70px;
 }
 .communityactivities .el-header {
@@ -188,10 +304,29 @@ const handleSearch = () => {}
   padding: 0 15px;
 }
 .communityactivities .el-main {
+  position: relative;
   background-color: white;
   margin-top: 10px;
   box-shadow: 0 5px 12px 0 rgba(0, 0, 0, 0.1);
   height: 70vh;
-  padding: 15px 10px;
+  padding: 15px 15px;
+}
+.communityactivities .el-tag{
+  padding: 0 9px;
+}
+.communityactivities .el-pagination {
+  position: absolute;
+  right: 10px;
+  margin-top: 50px;
+}
+.ActiveDesc {
+  padding: 10px 20px;
+}
+.ActiveDesc .activedesc-item {
+  display: flex;
+  margin: 10px 0;
+}
+.ActiveDesc .activedesc-item .el-image {
+  width: 200px;
 }
 </style>

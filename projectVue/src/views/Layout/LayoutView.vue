@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
 
 </script>
 
@@ -21,5 +20,6 @@ import { reactive, ref } from 'vue'
   padding:100px  0 0 300px;
   background: #f0f3f8;
   height: 100vh;
+  min-width: 1700px;
 }
 </style>

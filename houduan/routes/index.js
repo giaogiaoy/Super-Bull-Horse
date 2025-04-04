@@ -20,5 +20,32 @@ router.get('/getCAlist', async(req, res) => {
   })
 });
 
+// 新增活动
+router.post('/addCA', async(req, res) => {
+  
+})
+
+// 删除活动
+router.post('/deleteCA', async(req, res) => {
+  
+})
+
+// 修改活动
+router.post('/updateCA', async(req, res) => {
+  
+})
+
+// 审核活动
+router.post('/reviewCA', async(req, res) => {
+  
+})
+
+// 强制结束活动
+router.post('/forceEndCA', async(req, res) => {
+  
+})
+
+
+
 
 module.exports = router;

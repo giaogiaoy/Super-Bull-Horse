@@ -22,6 +22,13 @@ let CASchema = new mongoose.Schema({ //社区活动表
         type:Number,
         default:1
     }, //审核状态  1:审核中 2:已通过 3:已驳回
+    Creator:String, //创建人
+    AboutCommunity:String, //所属社区
+    CreateState:Date, //创建时间
+    isEnd:{
+        type:Boolean,
+        default:false
+    }, //是否强制结束  仅在突发情况下使用
 })
 let CAModel = mongoose.model('CAModel',CASchema)
 
