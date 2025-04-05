@@ -1,8 +1,9 @@
 [
-    {"Numbers":"200201","type":"测试1","status":"待办","name":"赵六1"},
-    {"Numbers":"200202","type":"测试2","status":"正做","name":"赵六3"},
-    {"Numbers":"200203","type":"测试3","status":"已办","name":"赵六3"},
-    {"Numbers":"200204","type":"测试4","status":"待办","name":"赵六4"},
-    {"Numbers":"200205","type":"测试5","status":"待办","name":"赵六5"},
-    {"Numbers":"200206","type":"测试6","status":"待办","name":"赵六6"}
+    {"name":"张三1","img":"/img/people1.jpg","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people"},
+    {"name":"张三2","img":"/img/people1.jpg","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people"},
+    {"name":"张三3","img":"/img/people1.jpg","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people"},
+    {"name":"张三4","img":"/img/people1.jpg","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people"},
+    {"name":"张三5","img":"/img/people1.jpg","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people"},
+    {"name":"张三6","img":"/img/people1.jpg","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people"},
+    {"name":"张三7","img":"/img/people1.jpg","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people"}
 ]

@@ -78,16 +78,22 @@ const handleClose = (key: string, keyPath: string[]) => {
 
 <style scoped>
 /* 基础布局样式 */
+*{
+  margin: 0;
+  padding: 0;
+}
 .common-layout {
   height: 100vh;
-  width: 100vw;
+  width: 100%;
   overflow: hidden;
+  /* background-color: aqua; */
 }
 
 .container {
   height: 100%;
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .header {
@@ -106,13 +112,17 @@ const handleClose = (key: string, keyPath: string[]) => {
 }
 
 .aside {
-  width: 200px;
+  width: 260px;
   background-color: rgb(20, 37, 85);
   color: white;
-  padding: 20px;
+  /* padding: 20px; */
   overflow-y: auto;
 }
+.el-menu-vertical-demo{
+  width: 260px;
+  background-color: rgb(20, 37, 85);
 
+}
 .main {
   flex: 1;
   padding: 20px;
