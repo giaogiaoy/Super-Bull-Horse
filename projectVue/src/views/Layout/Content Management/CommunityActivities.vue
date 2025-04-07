@@ -6,6 +6,8 @@ import { useRoute, useRouter } from 'vue-router'
 let router = useRouter()
 let route = useRoute()
 import dayjs from 'dayjs'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import UploadView from '../../../components/UploadView.vue'
 
 let activename = ref('') //活动名称
 let singupstate = ref('') //报名状态
@@ -64,6 +66,7 @@ const formatDate = (date: string | Date, format = 'YYYY-MM-DD HH:mm') => {
   return dayjs(date).format(format)
 }
 
+
 // 新增活动
 const handleAdd = () => {}
 // 搜索查询
@@ -71,13 +74,80 @@ const handleSearch = () => {}
 // 编辑活动
 const handleEdit = (row: any) => {}
 // 删除活动
-const handleDelete = (row: any) => {}
+const handleDelete = async (row: any) => {
+  let data = {
+    id: row._id,
+  }
+  let res = await axios.post('/deleteCA', { data })
+  if (res.data.code === 200) {
+    ElMessage.success('删除成功')
+    getCAList()
+  } else {
+    ElMessage.error('删除失败')
+  }
+}
 // 审核活动
 const handleReviewer = (row: any) => {}
 // 终止报名
 const handleIsEnd = (row: any) => {}
 
+const open = (row: any) => {
+  ElMessageBox.confirm('您确定要删除吗?', '警告', {
+    confirmButtonText: '删除',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(() => {
+      ElMessage({
+        type: 'success',
+        message: '确认删除',
+      })
+      handleDelete(row)
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消删除操作',
+      })
+    })
+}
 
+const dialogFormVisible = ref(true)
+const formLabelWidth = '120px'
+
+const form = reactive({
+  name: '',
+  singupNum: 0,
+  isLimit: false,
+  activeImg: '',
+  delivery: false,
+  type: [],
+  resource: '',
+  desc: '',
+  singupState: '',
+  singupEnd: '',
+  activeState: '',
+  activeEnd: '',
+  singuptime: '',
+  activetime: '',
+})
+
+const Preview = () => {
+  dialogFormVisible.value = false
+  setTimeout(() => {
+    dialogFormVisible.value = true
+  }, 500)
+}
+
+const handleChange1 = (value: string) => {
+  form.singupState = value[0]
+  form.singupEnd = value[1]
+}
+const handleChange2 = (value: string) => {
+  form.activeState = value[0]
+  form.activeEnd = value[1]
+  console.log(form)
+}
 </script>
 
 <template>
@@ -125,7 +195,7 @@ const handleIsEnd = (row: any) => {}
           </template>
         </el-input>
         <el-button color="#169BD5" @click="handleSearch">查询</el-button>
-        <el-button color="#169BD5" @click="handleAdd">新增</el-button>
+        <el-button color="#169BD5" @click="dialogFormVisible = true">新增</el-button>
       </el-header>
       <el-main>
         <el-table
@@ -210,7 +280,7 @@ const handleIsEnd = (row: any) => {}
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="活动名称" prop="activeName" width="120"/>
+          <el-table-column label="活动名称" prop="activeName" width="120" />
           <el-table-column label="报名时间" width="190">
             <template #default="scope">
               {{ formatDate(scope.row.singupState) + '至' + formatDate(scope.row.singupEnd) }}
@@ -221,42 +291,77 @@ const handleIsEnd = (row: any) => {}
               {{ scope.row.singupNum ? scope.row.singupNum : '无限制' }}
             </template>
           </el-table-column>
-          <el-table-column label="已报名人数" prop="singupNumNow" width="120"/>
-          <el-table-column label="创建人" prop="Creator" width="120"/>
+          <el-table-column label="已报名人数" prop="singupNumNow" width="120" />
+          <el-table-column label="创建人" prop="Creator" width="120" />
           <el-table-column label="创建时间" width="180">
             <template #default="scope">
               {{ formatDate(scope.row.CreateState) }}
             </template>
           </el-table-column>
-          <el-table-column label="审核人" prop="Reviewer" width="120"/>
+          <el-table-column label="审核人" prop="Reviewer" width="120" />
           <el-table-column label="审核状态" width="120">
             <template #default="scope">
-              <el-tag v-if="scope.row.ReviewerState === 1" type="warning" effect="dark">审核中</el-tag>
-              <el-tag v-else-if="scope.row.ReviewerState === 2" type="success" effect="dark">已通过</el-tag>
-              <el-tag v-else-if="scope.row.ReviewerState === 3" type="danger" effect="dark">已驳回</el-tag>
+              <el-tag v-if="scope.row.ReviewerState === 1" type="warning" effect="dark"
+                >审核中</el-tag
+              >
+              <el-tag v-else-if="scope.row.ReviewerState === 2" type="success" effect="dark"
+                >已通过</el-tag
+              >
+              <el-tag v-else-if="scope.row.ReviewerState === 3" type="danger" effect="dark"
+                >已驳回</el-tag
+              >
             </template>
           </el-table-column>
           <el-table-column label="报名状态" width="120">
             <template #default="scope">
-              <el-tag v-if="new Date(scope.row.singupState).getTime() > Date.now()" type="warning">未发布</el-tag>
-              <el-tag v-else-if="Date.now() < new Date(scope.row.singupEnd).getTime()" type="success">报名中</el-tag>
-              <el-tag v-else-if="Date.now() > new Date(scope.row.singupEnd).getTime() || scope.row.isEnd" type="danger">报名结束</el-tag>
+              <el-tag v-if="new Date(scope.row.singupState).getTime() > Date.now()" type="warning"
+                >未发布</el-tag
+              >
+              <el-tag
+                v-else-if="Date.now() < new Date(scope.row.singupEnd).getTime()"
+                type="success"
+                >报名中</el-tag
+              >
+              <el-tag
+                v-else-if="Date.now() > new Date(scope.row.singupEnd).getTime() || scope.row.isEnd"
+                type="danger"
+                >报名结束</el-tag
+              >
             </template>
           </el-table-column>
           <el-table-column label="活动状态" width="120">
             <template #default="scope">
-              <el-tag v-if="new Date(scope.row.activeState).getTime() > Date.now()" type="warning" effect="plain">未开始</el-tag>
-              <el-tag v-else-if="Date.now() < new Date(scope.row.activeEnd).getTime()" type="success" effect="plain">进行中</el-tag>
-              <el-tag v-else-if="Date.now() > new Date(scope.row.activeEnd).getTime()" type="danger" effect="plain">已结束</el-tag>
+              <el-tag
+                v-if="new Date(scope.row.activeState).getTime() > Date.now()"
+                type="warning"
+                effect="plain"
+                >未开始</el-tag
+              >
+              <el-tag
+                v-else-if="Date.now() < new Date(scope.row.activeEnd).getTime()"
+                type="success"
+                effect="plain"
+                >进行中</el-tag
+              >
+              <el-tag
+                v-else-if="Date.now() > new Date(scope.row.activeEnd).getTime()"
+                type="danger"
+                effect="plain"
+                >已结束</el-tag
+              >
             </template>
           </el-table-column>
           <el-table-column label="操作" fixed="right" min-width="210">
             <template #default="scope">
               <el-button type="text" @click="handleEdit(scope.row)">编辑</el-button>
-              <el-button type="text" @click="handleDelete(scope.row)">删除</el-button>
+              <el-button type="text" @click="open(scope.row)">删除</el-button>
               <el-button type="text" @click="handleReviewer(scope.row)">审核</el-button>
-              <el-button v-if="Date.now() < new Date(scope.row.singupEnd).getTime() && !scope.row.isEnd" type="text"
-               @click="handleIsEnd(scope.row)">终止报名</el-button>
+              <el-button
+                v-if="Date.now() < new Date(scope.row.singupEnd).getTime() && !scope.row.isEnd"
+                type="text"
+                @click="handleIsEnd(scope.row)"
+                >终止报名</el-button
+              >
             </template>
           </el-table-column>
         </el-table>
@@ -271,6 +376,68 @@ const handleIsEnd = (row: any) => {}
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
+
+        <el-dialog v-model="dialogFormVisible" title="添加活动" width="800">
+          <el-form :model="form">
+            <el-form-item label="活动名称" style="font-weight: bold" :label-width="formLabelWidth">
+              <el-input v-model="form.name" autocomplete="off" />
+            </el-form-item>
+            <el-form-item label="报名时间" style="font-weight: bold" :label-width="formLabelWidth">
+              <el-date-picker
+                @change="handleChange1"
+                v-model="form.singuptime"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+              />
+            </el-form-item>
+            <el-form-item label="活动时间" style="font-weight: bold" :label-width="formLabelWidth">
+              <el-date-picker
+                @change="handleChange2"
+                v-model="form.activetime"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+              />
+            </el-form-item>
+            <el-form-item
+              label="报名人数限制"
+              style="font-weight: bold"
+              :label-width="formLabelWidth"
+            >
+              <el-radio-group v-model="form.isLimit">
+                <el-radio value="true" size="large">不限制 &emsp;</el-radio>
+                <el-radio value="false" size="large">
+                  限制 &ensp;<el-input
+                    type="number"
+                    v-model="form.singupNum"
+                    autocomplete="off"
+                  />&ensp;人
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="活动图片" style="font-weight: bold" :label-width="formLabelWidth">
+              <UploadView />
+            </el-form-item>
+            <!-- <el-form-item label="Zones" :label-width="formLabelWidth">
+              <el-select v-model="form.region" placeholder="Please select a zone">
+                <el-option label="Zone No.1" value="shanghai" />
+                <el-option label="Zone No.2" value="beijing" />
+              </el-select>
+            </el-form-item> -->
+          </el-form>
+          <template #footer>
+            <div class="dialog-footer">
+              <el-button color="yellowgreen" style="color: white" @click="Preview">
+                预览
+              </el-button>
+              <el-button type="danger" @click="dialogFormVisible = false">取消</el-button>
+              <el-button color="#169BD5" @click="handleAdd"> 确定 </el-button>
+            </div>
+          </template>
+        </el-dialog>
       </el-main>
     </el-container>
   </div>
@@ -311,13 +478,19 @@ const handleIsEnd = (row: any) => {}
   height: 70vh;
   padding: 15px 15px;
 }
-.communityactivities .el-tag{
+.communityactivities .el-tag {
   padding: 0 9px;
 }
 .communityactivities .el-pagination {
   position: absolute;
   right: 10px;
   margin-top: 50px;
+}
+.communityactivities .el-dialog .el-button {
+  padding: 0 9px;
+}
+.communityactivities .el-form-item {
+  margin-bottom: 10px;
 }
 .ActiveDesc {
   padding: 10px 20px;

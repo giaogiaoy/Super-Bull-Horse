@@ -29,6 +29,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+// 静态文件服务
+app.use('/uploads/final', express.static(path.join(__dirname, 'uploads/final')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
