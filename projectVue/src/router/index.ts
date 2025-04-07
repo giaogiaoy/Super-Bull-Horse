@@ -29,9 +29,14 @@ const router = createRouter({
           component: () => import('@/views/Layout/Home/Home.vue'),
         },
         {
-          path:'/layout/video',   //监控视频'
+          path:'/layout/video',   //人员关怀'
           name:'video',
-          component: () => import('@/views/Layout/Video surveillance/VideoView.vue'),
+          component: () => import('@/views/Layout/Videosurveillance/VideoView.vue'),
+        },
+        {
+          path:'/layout/people',   //人员管理'
+          name:'people',
+          component: () => import('@/views/Layout/Staffmanagement/PeopleView.vue'),
         }
       ]
     },

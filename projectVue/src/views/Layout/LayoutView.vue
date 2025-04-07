@@ -23,7 +23,7 @@ const handleClose = (key: string, keyPath: string[]) => {
   <div class="common-layout">
     <el-container class="container">
       <el-header class="header">
-        <p style="font-size: 35px;color:rgb(54, 120, 252)">LOGO</p>
+        <p style="font-size: 35px;color:rgb(54, 120, 252);margin: 0px 30px;">LOGO</p>
         <p style="font-size: 30px;font-weight: bold;">
           智慧小区物业信息管理平台
         </p>
@@ -36,36 +36,39 @@ const handleClose = (key: string, keyPath: string[]) => {
                 <el-icon :size="10">
                   <location />
                 </el-icon>
-                <span>Navigator One</span>
+                <span>首页</span>
               </template>
-              <el-menu-item-group title="Group One">
                 <el-menu-item index="1-1">item one</el-menu-item>
                 <el-menu-item index="1-2">item two</el-menu-item>
-              </el-menu-item-group>
-              <el-menu-item-group title="Group Two">
                 <el-menu-item index="1-3">item three</el-menu-item>
-              </el-menu-item-group>
               <el-sub-menu index="1-4">
                 <template #title>item four</template>
                 <el-menu-item index="1-4-1">item one</el-menu-item>
               </el-sub-menu>
             </el-sub-menu>
-            <el-menu-item index="2">
-              <el-icon><icon-menu /></el-icon>
-              <span>Navigator Two</span>
-            </el-menu-item>
-            <el-menu-item index="3" disabled>
-              <el-icon>
-                <document />
-              </el-icon>
-              <span>Navigator Three</span>
-            </el-menu-item>
-            <el-menu-item index="4">
-              <el-icon>
-                <setting />
-              </el-icon>
-              <span>Navigator Four</span>
-            </el-menu-item>
+            <el-sub-menu index="2">
+              <template #title>
+                <el-icon :size="10">
+                  <location />
+                </el-icon>
+                <span>内容</span>
+              </template>
+                <el-menu-item index="2-1">item one</el-menu-item>
+                <el-menu-item index="2-2">item two</el-menu-item>
+                <el-menu-item index="2-3">item three</el-menu-item>
+            </el-sub-menu>
+            <el-sub-menu index="3">
+              <template #title>
+                <el-icon :size="10">
+                  <location />
+                </el-icon>
+                <span>智慧管理</span>
+              </template>
+                <el-menu-item index="3-1">员工管理</el-menu-item>
+                <el-menu-item index="3-2">item two</el-menu-item>
+                <el-menu-item index="3-3">item three</el-menu-item>
+            </el-sub-menu>
+
           </el-menu>
         </el-aside>
         <el-main class="main">
@@ -77,16 +80,16 @@ const handleClose = (key: string, keyPath: string[]) => {
 </template>
 
 <style scoped>
-/* 基础布局样式 */
-*{
+/* 基础布局样式保持不变 */
+* {
   margin: 0;
   padding: 0;
 }
+
 .common-layout {
   height: 100vh;
   width: 100%;
   overflow: hidden;
-  /* background-color: aqua; */
 }
 
 .container {
@@ -99,7 +102,6 @@ const handleClose = (key: string, keyPath: string[]) => {
 .header {
   height: 60px;
   background-color: rgb(255, 255, 255);
-  /* color: white; */
   display: flex;
   align-items: center;
   padding: 0 20px;
@@ -115,17 +117,46 @@ const handleClose = (key: string, keyPath: string[]) => {
   width: 260px;
   background-color: rgb(20, 37, 85);
   color: white;
-  /* padding: 20px; */
   overflow-y: auto;
 }
-.el-menu-vertical-demo{
-  width: 260px;
-  background-color: rgb(20, 37, 85);
 
-}
 .main {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
 }
+
+/* 深度修改菜单样式 */
+:deep(.el-menu) {
+  background-color: rgb(20, 37, 85) !important;
+  border-right: none !important;
+}
+
+:deep(.el-menu-item),
+:deep(.el-sub-menu__title) {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+:deep(.el-menu-item:hover),
+:deep(.el-sub-menu__title:hover) {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+:deep(.el-menu-item.is-active) {
+  color: #ffffff !important;
+  background-color: rgba(24, 100, 222, 0.5) !important;
+}
+
+:deep(.el-sub-menu .el-menu-item) {
+  background-color: rgb(12, 25, 61) !important;
+}
+
+:deep(.el-menu-item-group__title) {
+  padding: 0 !important;
+}
+
+:deep(.el-icon) {
+  color: inherit !important;
+}
 </style>
+

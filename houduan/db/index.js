@@ -1,5 +1,5 @@
 var  mongoose = require('mongoose')
-mongoose.connect('mongodb+srv://giaogiaoyao:wangziyao1314@cluster0.de4wdak.mongodb.net/people').then(
+mongoose.connect('mongodb+srv://giaogiaoyao:wangziyao1314@cluster0.de4wdak.mongodb.net/SuperBullHose').then(
     ()=>{
         console.log('连接成功')
     }
@@ -17,8 +17,7 @@ const peopleSchema = new mongoose.Schema({
     time:String, //时间
     type:String,//关怀类型,
     ID:String,//身份证号
-
-
+    desc:String,//关怀内容描述
 })
 const peopleModel = mongoose.model('people',peopleSchema,'people')
 module.exports={

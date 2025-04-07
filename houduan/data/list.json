@@ -1,9 +1,9 @@
 [
-    {"name":"张三1","img":"/img/people1.jpg","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people"},
-    {"name":"张三2","img":"/img/people1.jpg","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people"},
-    {"name":"张三3","img":"/img/people1.jpg","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people"},
-    {"name":"张三4","img":"/img/people1.jpg","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people"},
-    {"name":"张三5","img":"/img/people1.jpg","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people"},
-    {"name":"张三6","img":"/img/people1.jpg","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people"},
-    {"name":"张三7","img":"/img/people1.jpg","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people"}
+    {"name":"张三1","img":"http://localhost:3000/upload/1743941764617.png","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people","desc":"贫困户"},
+    {"name":"张三2","img":"http://localhost:3000/upload/1743941764617.png","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people","desc":"思想危险"},
+    {"name":"张三3","img":"http://localhost:3000/upload/1743941764617.png","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people","desc":"思想危险"},
+    {"name":"张三4","img":"http://localhost:3000/upload/1743941764617.png","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people","desc":"贫困户"},
+    {"name":"张三5","img":"http://localhost:3000/upload/1743941764617.png","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people","desc":"思想危险"},
+    {"name":"张三6","img":"http://localhost:3000/upload/1743941764617.png","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people","desc":"思想危险"},
+    {"name":"张三7","img":"http://localhost:3000/upload/1743941764617.png","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people","desc":"思想危险"}
 ]
