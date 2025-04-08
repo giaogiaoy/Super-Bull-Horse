@@ -105,19 +105,28 @@ router.post("/verify", async (req, res) => {
         });
       }
 
-      // 检查已上传分片
-      const chunkDir = path.join(TEMP_DIR, hash);
-      const chunks = await fs.readdir(chunkDir);
-      const uploaded = chunks.map((chunk) =>
-        parseInt(path.basename(chunk).split(".")[0])
-      );
 
-      res.json({ exists: false, uploaded });
-    } catch (err) {
-      if (err.code === "ENOENT") {
-        // 目录不存在的情况
-        return res.json({ exists: false, uploaded: [] });
+      // 检查已上传分片并返回已上传的索引
+      const chunkDir = path.join(TEMP_DIR, hash);
+      let uploaded = [];
+
+      try {
+        if (await fs.pathExists(chunkDir)) {
+          const chunks = await fs.readdir(chunkDir);
+          uploaded = chunks
+            .map((chunk) => parseInt(path.basename(chunk).split(".")[0]))
+            .filter((index) => !isNaN(index))
+            .sort((a, b) => a - b);
+        }
+      } catch (err) {
+        console.error("读取分片目录错误:", err);
       }
+
+      res.json({
+        exists: false,
+        uploaded: uploaded,
+      });
+    } catch (err) {
       console.error("验证错误:", err);
       res.status(500).json({ error: "服务器错误" });
     }
@@ -135,12 +144,21 @@ router.post(
   upload.single("file"),
   async (req, res) => {
     try {
+      // 如果请求被客户端取消，直接返回
+      if (req.aborted) {
+        return res.status(499).json({
+          code: 499,
+          message: "请求已取消",
+        });
+      }
+
       // 添加调试日志
-      console.log("上传参数:", {
-        hash: req.body.hash,
-        index: req.body.index,
-        name: req.body.name,
-      });
+      // console.log("上传参数:", {
+      //   hash: req.body.hash,
+      //   index: req.body.index,
+      //   name: req.body.name,
+      // });
+
       if (!req.body.hash || !req.body.index) {
         return res.status(400).json({
           error: "参数错误",
@@ -167,6 +185,11 @@ router.post(
         },
       });
     } catch (err) {
+      // 如果是客户端取消的请求，不需要返回错误
+      if (err.code === "ECONNABORTED" || req.aborted) {
+        return;
+      }
+
       console.error("分片上传错误:", err);
       res.status(500).json({
         error: "分片上传失败",
@@ -177,18 +200,195 @@ router.post(
 );
 
 // 文件合并接口
+// router.post("/merge1", async (req, res) => {
+//   try {
+//     // 如果是暂停状态，返回特殊状态码
+//     if (req.aborted) {
+//       return res.status(499).json({
+//         code: 499,
+//         message: "上传已暂停",
+//       });
+//     }
+
+//     // console.log("合并请求参数:", req.body);
+//     if (!req.body.size || isNaN(Number(req.body.size))) {
+//       return res.status(400).json({
+//         error: "参数错误",
+//         message: "缺少有效的文件大小(size)",
+//       });
+//     }
+//     const { hash, name, total } = req.body;
+
+//     // console.log("合并请求参数:", { hash, name, total });
+
+//     // 验证必要参数
+//     if (!hash || typeof hash !== "string") {
+//       return res.status(400).json({
+//         error: "参数错误",
+//         message: "缺少有效的文件哈希值(hash)",
+//       });
+//     }
+//     if (!name || typeof name !== "string") {
+//       return res.status(400).json({
+//         error: "参数错误",
+//         message: "缺少有效的文件名(name)",
+//       });
+//     }
+//     if (!total || isNaN(Number(total))) {
+//       return res.status(400).json({
+//         error: "参数错误",
+//         message: "缺少有效的总分片数(total)",
+//       });
+//     }
+
+//     const ext = path.extname(name);
+//     const finalPath = path.resolve(FINAL_DIR, `${hash}${ext}`);
+//     const chunkDir = path.resolve(TEMP_DIR, hash);
+//     // console.log("分片目录路径:", chunkDir);
+
+//     // 如果是暂停状态，不删除分片目录
+//     if (!req.aborted && fs.existsSync(chunkDir)) {
+//       const chunks = fs.readdirSync(chunkDir);
+//       if (chunks.length < Number(total)) {
+//         return res.status(400).json({
+//           error: "上传未完成",
+//           message: "文件上传被中断，请继续上传",
+//           uploaded: chunks.length,
+//           total: Number(total),
+//         });
+//       }
+//     }
+
+//     // 检查目录权限
+//     try {
+//       await fs.access(TEMP_DIR, fs.constants.R_OK | fs.constants.W_OK);
+//       await fs.access(FINAL_DIR, fs.constants.R_OK | fs.constants.W_OK);
+//     } catch (err) {
+//       console.error("目录权限错误:", err);
+//       return res.status(500).json({
+//         error: "权限错误",
+//         message: "无法访问上传目录，请检查目录权限",
+//       });
+//     }
+
+//     // 获取分片文件列表前确保目录存在
+//     if (!fs.existsSync(chunkDir)) {
+//       console.error("分片目录不存在:", chunkDir);
+//       return res.status(400).json({
+//         error: "分片不存在",
+//         message: `找不到分片目录: ${hash}`,
+//       });
+//     }
+
+//     // // 移动调试日志到正确位置
+//     const chunks = fs
+//       .readdirSync(chunkDir)
+//       .filter((file) => {
+//         const base = path.basename(file);
+//         return !isNaN(parseInt(base.split(".")[0]));
+//       })
+//       .sort((a, b) => {
+//         const aIndex = parseInt(path.basename(a).split(".")[0]);
+//         const bIndex = parseInt(path.basename(b).split(".")[0]);
+//         return aIndex - bIndex;
+//       });
+
+//     // 移动调试日志到正确位置
+//     // console.log("分片目录路径:", chunkDir);
+//     // console.log("实际分片文件:", chunks);
+//     // console.log("预期分片数量:", total);
+
+//     // 验证分片数量
+//     if (chunks.length !== Number(total)) {
+//       return res.status(400).json({
+//         error: "分片数量不符",
+//         expected: total,
+//         actual: chunks.length,
+//       });
+//     }
+
+//     // 添加分片目录检查
+//     if (!fs.existsSync(chunkDir)) {
+//       const tempDirContents = fs.readdirSync(TEMP_DIR);
+//       console.error("临时目录内容:", tempDirContents);
+//       return res.status(400).json({
+//         error: "分片不存在",
+//         message: `找不到分片目录: ${chunkDir}`,
+//       });
+//     }
+
+//     // 创建可写流前确保目标目录存在
+//     await fs.ensureDir(FINAL_DIR);
+//     // const writeStream = fs.createWriteStream(finalPath);
+
+//     try {
+//       // 获取并排序分片文件（增强排序逻辑）
+//       const chunks = fs.readdirSync(chunkDir);
+//       const sortedChunks = chunks
+//         .filter((file) => !isNaN(parseInt(path.basename(file).split(".")[0]))) // 过滤有效分片
+//         .sort((a, b) => {
+//           const aIndex = parseInt(path.basename(a).split(".")[0]);
+//           const bIndex = parseInt(path.basename(b).split(".")[0]);
+//           return aIndex - bIndex;
+//         });
+
+//       // 验证分片数量
+//       if (sortedChunks.length !== Number(total)) {
+//         return res.status(400).json({
+//           error: "分片数量不符",
+//           expected: total,
+//           actual: sortedChunks.length,
+//         });
+//       }
+//       // 创建可写流之前确保目标目录存在
+//       await fs.ensureDir(FINAL_DIR);
+//       const writeStream = fs.createWriteStream(finalPath);
+
+//       // 合并分片
+//       for (const chunk of sortedChunks) {
+//         const chunkPath = path.resolve(chunkDir, chunk);
+
+//         try {
+//           const data = await fs.readFile(chunkPath);
+//           await new Promise((resolve, reject) => {
+//             writeStream.write(data, (err) => {
+//               if (err) reject(err);
+//               else resolve();
+//             });
+//           });
+//           // 立即删除已处理的分片
+//           await fs.unlink(chunkPath).catch(console.error);
+//         } catch (err) {
+//           console.error(`处理分片 ${chunk} 失败:`, err);
+//           throw new Error(`分片 ${chunk} 处理失败: ${err.message}`);
+//         }
+//       }
+
+//       writeStream.end();
+//       await new Promise((resolve) => writeStream.on("finish", resolve));
+
+//       // 改为使用 remove 方法删除目录（兼容非空目录）
+//       await fs.remove(chunkDir).catch(console.error);
+
+//       res.json({
+//         url: `/uploads/final/${hash}${ext}`,
+//         message: "合并成功",
+//       });
+//     } catch (err) {
+//       throw new Error(`文件合并失败: ${err.message}`);
+//     }
+//   } catch (err) {
+//     console.error("合并错误:", err);
+//     res.status(500).json({
+//       error: "合并失败",
+//       details: err.message,
+//     });
+//   }
+// });
+
 router.post("/merge", async (req, res) => {
   try {
-    // console.log("合并请求参数:", req.body);
-    if (!req.body.size || isNaN(Number(req.body.size))) {
-      return res.status(400).json({
-        error: "参数错误",
-        message: "缺少有效的文件大小(size)",
-      });
-    }
-    const { hash, name, total } = req.body;
-
-    // console.log("合并请求参数:", { hash, name, total });
+    const { hash, name, total, size } = req.body;
 
     // 验证必要参数
     if (!hash || typeof hash !== "string") {
@@ -197,142 +397,75 @@ router.post("/merge", async (req, res) => {
         message: "缺少有效的文件哈希值(hash)",
       });
     }
-    if (!name || typeof name !== "string") {
-      return res.status(400).json({
-        error: "参数错误",
-        message: "缺少有效的文件名(name)",
-      });
-    }
-    if (!total || isNaN(Number(total))) {
-      return res.status(400).json({
-        error: "参数错误",
-        message: "缺少有效的总分片数(total)",
-      });
-    }
 
-    const ext = path.extname(name);
-    const finalPath = path.resolve(FINAL_DIR, `${hash}${ext}`);
     const chunkDir = path.resolve(TEMP_DIR, hash);
-    // console.log("分片目录路径:", chunkDir);
 
-    // 检查目录权限
-    try {
-      await fs.access(TEMP_DIR, fs.constants.R_OK | fs.constants.W_OK);
-      await fs.access(FINAL_DIR, fs.constants.R_OK | fs.constants.W_OK);
-    } catch (err) {
-      console.error("目录权限错误:", err);
-      return res.status(500).json({
-        error: "权限错误",
-        message: "无法访问上传目录，请检查目录权限",
-      });
-    }
-
-    // 获取分片文件列表前确保目录存在
+    // 检查分片目录是否存在
     if (!fs.existsSync(chunkDir)) {
-      console.error("分片目录不存在:", chunkDir);
       return res.status(400).json({
-        error: "分片不存在",
-        message: `找不到分片目录: ${hash}`,
+        error: "上传未完成",
+        message: "未找到上传的分片",
+        uploaded: 0,
+        total: Number(total),
       });
     }
 
-    // // 移动调试日志到正确位置
+    // 获取已上传的分片
     const chunks = fs
       .readdirSync(chunkDir)
-      .filter((file) => {
-        const base = path.basename(file);
-        return !isNaN(parseInt(base.split(".")[0]));
-      })
+      .filter((file) => !isNaN(parseInt(path.basename(file).split(".")[0])))
       .sort((a, b) => {
         const aIndex = parseInt(path.basename(a).split(".")[0]);
         const bIndex = parseInt(path.basename(b).split(".")[0]);
         return aIndex - bIndex;
       });
 
-    // 移动调试日志到正确位置
-    // console.log("分片目录路径:", chunkDir);
-    // console.log("实际分片文件:", chunks);
-    // console.log("预期分片数量:", total);
-
-    // 验证分片数量
-    if (chunks.length !== Number(total)) {
+    // 检查是否所有分片都已上传
+    if (chunks.length < Number(total)) {
       return res.status(400).json({
-        error: "分片数量不符",
-        expected: total,
-        actual: chunks.length,
+        error: "上传未完成",
+        message: "文件上传被中断，请继续上传",
+        uploaded: chunks.length,
+        total: Number(total),
       });
     }
 
-    // 添加分片目录检查
-    if (!fs.existsSync(chunkDir)) {
-      const tempDirContents = fs.readdirSync(TEMP_DIR);
-      console.error("临时目录内容:", tempDirContents);
-      return res.status(400).json({
-        error: "分片不存在",
-        message: `找不到分片目录: ${chunkDir}`,
-      });
-    }
+    // 开始合并文件
+    const ext = path.extname(name);
+    const finalPath = path.resolve(FINAL_DIR, `${hash}${ext}`);
 
-    // 创建可写流前确保目标目录存在
+    // 确保目标目录存在
     await fs.ensureDir(FINAL_DIR);
-    // const writeStream = fs.createWriteStream(finalPath);
+    const writeStream = fs.createWriteStream(finalPath);
 
-    try {
-      // 获取并排序分片文件（增强排序逻辑）
-      const chunks = fs.readdirSync(chunkDir);
-      const sortedChunks = chunks
-        .filter((file) => !isNaN(parseInt(path.basename(file).split(".")[0]))) // 过滤有效分片
-        .sort((a, b) => {
-          const aIndex = parseInt(path.basename(a).split(".")[0]);
-          const bIndex = parseInt(path.basename(b).split(".")[0]);
-          return aIndex - bIndex;
-        });
-
-      // 验证分片数量
-      if (sortedChunks.length !== Number(total)) {
-        return res.status(400).json({
-          error: "分片数量不符",
-          expected: total,
-          actual: sortedChunks.length,
-        });
-      }
-      // 创建可写流之前确保目标目录存在
-      await fs.ensureDir(FINAL_DIR);
-      const writeStream = fs.createWriteStream(finalPath);
-
-      // 合并分片
-      for (const chunk of sortedChunks) {
-        const chunkPath = path.resolve(chunkDir, chunk);
-
-        try {
-          const data = await fs.readFile(chunkPath);
-          await new Promise((resolve, reject) => {
-            writeStream.write(data, (err) => {
-              if (err) reject(err);
-              else resolve();
-            });
+    // 合并分片
+    for (const chunk of chunks) {
+      const chunkPath = path.resolve(chunkDir, chunk);
+      try {
+        const data = await fs.readFile(chunkPath);
+        await new Promise((resolve, reject) => {
+          writeStream.write(data, (err) => {
+            if (err) reject(err);
+            else resolve();
           });
-          // 立即删除已处理的分片
-          await fs.remove(chunkPath).catch(console.error);
-        } catch (err) {
-          console.error(`处理分片 ${chunk} 失败:`, err);
-          throw new Error(`分片 ${chunk} 处理失败: ${err.message}`);
-        }
+        });
+        // 立即删除已处理的分片
+        await fs.unlink(chunkPath).catch(console.error);
+      } catch (err) {
+        console.error(`处理分片 ${chunk} 失败:`, err);
+        throw new Error(`分片 ${chunk} 处理失败: ${err.message}`);
       }
-
-      writeStream.end();
-      await new Promise((resolve) => writeStream.on("finish", resolve));
-
-      // 改为使用 remove 方法删除目录（兼容非空目录）
-      await fs.remove(chunkDir).catch(console.error);
-
-      res.json({
-        url: `/uploads/final/${hash}${ext}`,
-        message: "合并成功",
-      });
-    } catch (err) {
-      throw new Error(`文件合并失败: ${err.message}`);
     }
+
+    // 完成写入并删除临时目录
+    writeStream.end();
+    await new Promise((resolve) => writeStream.on("finish", resolve));
+    await fs.remove(chunkDir).catch(console.error);
+
+    res.json({
+      url: `/uploads/final/${hash}${ext}`,
+      message: "合并成功",
+    });
   } catch (err) {
     console.error("合并错误:", err);
     res.status(500).json({
@@ -341,5 +474,4 @@ router.post("/merge", async (req, res) => {
     });
   }
 });
-
 module.exports = router;

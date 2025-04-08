@@ -59,25 +59,24 @@ const handleUpload = async (uploadFile: UploadFile) => {
     if (!uploadStatus.isPaused) {
       uploadStatus.progress = 0
       uploadStatus.uploadedChunks = []
-      uploadStatus.currentFile = null
+      uploadStatus.currentFile = uploadFile.raw as File
     }
     uploadStatus.show = true
-    uploadStatus.isPaused = false
     uploadStatus.isUploading = true
     uploadController.value = new AbortController()
 
     // 添加文件大小验证
-    const file = uploadFile.raw || uploadStatus.currentFile;
-    if (!file) {
-      ElMessage.error('无效的文件对象');
-      return;
+    const file = uploadFile.raw || uploadStatus.currentFile
+    if (!file || !(file instanceof File)) {
+      ElMessage.error('无效的文件对象')
+      return
     }
 
     // 检查文件大小是否超过1GB
-    const MAX_FILE_SIZE = 1024 * 1024 * 1024; // 1GB
-    if (file.size > MAX_FILE_SIZE) {
-      ElMessage.error('文件大小不能超过1GB');
-      return;
+    const MAX_FILE_SIZE = 1024 * 1024 * 1024 // 1GB
+    if (file?.size > MAX_FILE_SIZE) {
+      ElMessage.error('文件大小不能超过1GB')
+      return
     }
 
     // 修复哈希计算逻辑
@@ -102,6 +101,12 @@ const handleUpload = async (uploadFile: UploadFile) => {
         ElMessage.error('验证服务不可用')
         return { data: { exists: false, uploaded: [] } }
       })
+
+    // 更新已上传的分片信息
+    if (data.uploaded && Array.isArray(data.uploaded)) {
+      uploadStatus.uploadedChunks = data.uploaded
+      uploadStatus.progress = Math.floor((data.uploaded.length / chunks) * 100)
+    }
 
     // 添加请求参数验证
     if (!fileHash || !file.name) {
@@ -144,16 +149,36 @@ const handleUpload = async (uploadFile: UploadFile) => {
               signal: uploadController.value?.signal,
               onUploadProgress: (progressEvent) => {
                 if (uploadStatus.isPaused) return
+                // 计算当前分片的进度
                 const chunkProgress =
                   progressEvent.loaded / (progressEvent.total || progressEvent.loaded)
-                uploadStatus.progress = Math.round(((i + chunkProgress) / chunks) * 100)
+                // 计算已完成的分片总大小
+                const completedChunksSize = uploadStatus.uploadedChunks.length * CHUNK_SIZE
+                // 计算当前分片的实际大小
+                const currentChunkSize = end - start
+                // 计算当前分片的已上传大小
+                const currentUploadedSize = chunkProgress * currentChunkSize
+                // 计算总进度
+                const totalProgress = (completedChunksSize + currentUploadedSize) / file.size
+                // 更新进度，确保不超过100
+                uploadStatus.progress = Math.min(Math.ceil(totalProgress * 100), 100)
               },
               timeout: 30000,
             })
-            console.log(uploadStatus.progress);
+            console.log(uploadStatus.progress)
 
             if (response.status === 200) {
               uploadStatus.uploadedChunks.push(i)
+              // 保存上传状态
+              localStorage.setItem(
+                'uploadStatus',
+                JSON.stringify({
+                  fileHash,
+                  fileName: file.name,
+                  chunks: uploadStatus.uploadedChunks,
+                  total: chunks,
+                })
+              )
               return response
             }
           } catch (error) {
@@ -198,7 +223,8 @@ const handleUpload = async (uploadFile: UploadFile) => {
         validateStatus: (status) => status === 200,
       }
     )
-
+    // 确保最后设置进度为 100%
+    uploadStatus.progress = 100
     ElMessage.success('文件上传成功')
 
     // 状态重置移到合并成功后
@@ -219,6 +245,24 @@ const handleUpload = async (uploadFile: UploadFile) => {
       handleUpload(uploadFile)
       return
     }
+    // 处理上传未完成的情况
+    if (error.response?.data?.error === '上传未完成') {
+      console.log('上传进度:', error.response.data)
+      uploadStatus.currentFile = uploadFile.raw as File
+      uploadStatus.uploadedChunks = Array.from(
+        { length: error.response.data.uploaded },
+        (_, i) => i
+      )
+      uploadStatus.progress = Math.floor(
+        (error.response.data.uploaded / error.response.data.total) * 100
+      )
+      uploadStatus.isUploading = false
+      uploadStatus.isPaused = true
+      uploadStatus.show = true
+      ElMessage.warning('上传已暂停，点击继续上传按钮继续')
+      return
+    }
+
     console.error('上传错误:', error)
     uploadStatus.isUploading = false
     uploadStatus.currentFile = null
@@ -248,7 +292,7 @@ const toggleUpload = () => {
     }
     handleUpload({
       ...resumeFile,
-      raw: { ...uploadStatus.currentFile, uid: Date.now() } as unknown as UploadRawFile,
+      raw: uploadStatus.currentFile as UploadRawFile,
       uid: Date.now(), // 将uid转换为字符串类型以匹配UploadRawFile接口要求
     })
   }
@@ -280,8 +324,14 @@ export default {
 
 <template>
   <div class="uploadView">
-    <el-upload action="#" list-type="picture-card" :auto-upload="false" :limit="1"
-    :on-change="handleUpload">
+    <el-upload
+      action="#"
+      list-type="picture-card"
+      :auto-upload="false"
+      :limit="1"
+      :on-change="handleUpload"
+      accept="image/jpeg,image/png,image/jpg"
+    >
       <el-icon><Plus /></el-icon>
 
       <template #file="{ file }">
@@ -298,25 +348,29 @@ export default {
         </div>
       </template>
       <template #tip>
-        <div class="upload-status" v-show="uploadStatus.show">
-          <el-progress :percentage="uploadStatus.progress" status="success" />
-        </div>
+        <div class="upload-status" v-show="uploadStatus.show"></div>
         <div class="el-upload__tip text-red">
-        注意提示：
+          注意提示：
           <br />
           1.上传文件大小不能超过1GB
           <br />
-          2.上传文件类型为：jpg、png、jpeg、gif
-      </div>
+          2.上传文件类型为：jpg、png、jpeg
+          <br />
+          3.只能上传一张图片
+        </div>
       </template>
     </el-upload>
-
+    <h4>附件</h4>
     <el-upload action="#" :auto-upload="false" :show-file-list="false" :on-change="handleUpload">
       <el-button type="primary">选择文件</el-button>
 
       <template #tip>
         <div class="upload-status" v-show="uploadStatus.show">
-          <el-progress :percentage="uploadStatus.progress" :stroke-width="15" />
+          <el-progress :percentage="uploadStatus.progress" />
+          <div class="chunk-info" v-if="uploadStatus.uploadedChunks.length > 0">
+            已上传: {{ uploadStatus.uploadedChunks.length }} /
+            {{ Math.ceil((uploadStatus.currentFile?.size || 0) / CHUNK_SIZE) }} 个分片
+          </div>
           <div class="upload-controls">
             <el-button
               @click.stop="toggleUpload"

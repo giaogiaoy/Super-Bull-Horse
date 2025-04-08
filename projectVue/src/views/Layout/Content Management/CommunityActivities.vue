@@ -8,6 +8,7 @@ let route = useRoute()
 import dayjs from 'dayjs'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import UploadView from '../../../components/UploadView.vue'
+// import UploadAppendix from '../../../components/UploadAppendix.vue'
 
 let activename = ref('') //活动名称
 let singupstate = ref('') //报名状态
@@ -421,6 +422,9 @@ const handleChange2 = (value: string) => {
             <el-form-item label="活动图片" style="font-weight: bold" :label-width="formLabelWidth">
               <UploadView />
             </el-form-item>
+            <!-- <el-form-item label="附件" style="font-weight: bold" :label-width="formLabelWidth">
+              <UploadAppendix />
+            </el-form-item> -->
             <!-- <el-form-item label="Zones" :label-width="formLabelWidth">
               <el-select v-model="form.region" placeholder="Please select a zone">
                 <el-option label="Zone No.1" value="shanghai" />
