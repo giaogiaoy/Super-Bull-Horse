@@ -15,10 +15,20 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
+<<<<<<< HEAD
     "@tanstack/vue-query": "^5.72.0",
     "axios": "^1.8.4",
     "dayjs": "^1.11.13",
     "element-plus": "^2.9.7",
+=======
+    "@types/lodash": "^4.17.16",
+    "animate.css": "^4.1.1",
+    "axios": "^1.8.4",
+    "crypto": "^1.0.1",
+    "dayjs": "^1.11.13",
+    "element-plus": "^2.9.7",
+    "js-md5": "^0.8.3",
+>>>>>>> 52709fc22957025655cc05364cd46401c4ba158f
     "pinia": "^3.0.1",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
@@ -33,7 +43,10 @@
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.5.0",
     "@vue/tsconfig": "^0.7.0",
+<<<<<<< HEAD
     "@vuedx/typescript-plugin-vue": "^0.7.6",
+=======
+>>>>>>> 52709fc22957025655cc05364cd46401c4ba158f
     "commitizen": "^4.3.0",
     "conventional-changelog-cli": "^2.2.2",
     "cz-conventional-changelog": "^3.3.0",

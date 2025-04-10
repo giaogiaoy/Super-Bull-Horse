@@ -17,7 +17,10 @@ export default defineConfigWithVueTs(
     name: 'app/files-to-ignore',
     ignores: ['**/dist/**', '**/dist-ssr/**', '**/coverage/**'],
   },
+<<<<<<< HEAD
 
+=======
+>>>>>>> 52709fc22957025655cc05364cd46401c4ba158f
   pluginVue.configs['flat/essential'],
   vueTsConfigs.recommended,
   skipFormatting,

@@ -5,7 +5,11 @@
  */
 
 var app = require('../app');
+<<<<<<< HEAD
 var debug = require('debug')('hello-world:server');
+=======
+var debug = require('debug')('houduan:server');
+>>>>>>> 52709fc22957025655cc05364cd46401c4ba158f
 var http = require('http');
 
 /**

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @import './base.css';
 
 #app {
@@ -33,3 +34,9 @@ a,
     padding: 0 2rem;
   }
 }
+=======
+*{
+  padding: 0%;
+  margin: 0%;
+}
+>>>>>>> 52709fc22957025655cc05364cd46401c4ba158f

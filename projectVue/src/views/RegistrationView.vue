@@ -1,10 +1,6 @@
 <template>
   <div class="about">
-<<<<<<< HEAD
-    <h1>404错误</h1>
-=======
-    <h1>404错误!</h1>
->>>>>>> 52709fc22957025655cc05364cd46401c4ba158f
+    <h1>This is an about page</h1>
   </div>
 </template>
 
