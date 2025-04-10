@@ -13,8 +13,8 @@ const Dysmsapi20170525 = require('@alicloud/dysmsapi20170525');
 const OpenApi = require('@alicloud/openapi-client');
 const Util = require('@alicloud/tea-util');
 const Tea = require('@alicloud/tea-typescript');
-let accessKeyIds = 'LTAI5tLSVb4wEiLvWCRQhvEx'
-let accessKeySecrets = 'L9pveOVlf0BU2HRwOpxhxNvUlLSPwo'
+let accessKeyIds = ''
+let accessKeySecrets = ''
 //用户角色管理
 router.post("/phone", async (req, res) => {
   let codes = req.body.code;
