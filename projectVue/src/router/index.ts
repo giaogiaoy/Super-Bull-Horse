@@ -37,6 +37,11 @@ const router = createRouter({
           path:'/layout/people',   //人员管理'
           name:'people',
           component: () => import('@/views/Layout/Staffmanagement/PeopleView.vue'),
+        },
+        {
+          path:'/layout/report',
+          name:'report',
+          component: () => import('@/views/Layout/Report/ReportView.vue'),
         }
       ]
     },

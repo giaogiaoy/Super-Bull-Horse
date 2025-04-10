@@ -20,6 +20,19 @@ const peopleSchema = new mongoose.Schema({
     desc:String,//关怀内容描述
 })
 const peopleModel = mongoose.model('people',peopleSchema,'people')
+
+const ReportSchema = new mongoose.Schema({
+    name:String, //姓名
+    building:String, //建筑
+    address:String, //居住地址
+    phone:String, //手机号
+    beganTime:String, //开始时间
+    date:String, //施工工期
+    status:Boolean,//状态
+    roal:String,//角色
+    JtAddress:String,//具体地址
+})
+const ReportModel = mongoose.model('Report',ReportSchema,'Report')
 module.exports={
-   peopleModel
+   peopleModel,ReportModel
 }

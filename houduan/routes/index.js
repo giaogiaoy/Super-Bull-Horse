@@ -4,7 +4,7 @@ var fs = require('fs')
 var multiparty = require('multiparty');
 var xlsx = require("node-xlsx").default;
 const jwt = require('jsonwebtoken');
-const {peopleModel}  = require('../db/index')
+const {peopleModel,ReportModel}  = require('../db/index')
 const path = require('path')
 /* GET home page. */
 
@@ -97,4 +97,40 @@ router.post('/upload', (req, res) => {
       });
     });
   });
+
+//获取维修报备信息
+router.get('/report',async(req,res)=>{
+    const page = req.query.page
+    const pageSize = req.query.pageSize
+    const sou = {}
+    const name = req.query.name
+    const ID = req.query.ID
+    const status = req.query.status
+    if(name){
+        sou.name = new RegExp(name)
+    }
+    if(ID){
+        sou.ID = ID
+    }
+    if(status){
+        sou.status = status
+    }
+    let data = await ReportModel.find(sou).skip((page-1)*pageSize).limit(pageSize)
+    let total = await ReportModel.find(sou).countDocuments()
+    res.send({
+        code:200,
+        data:data,
+        total:total
+    })
+})
+//点击验收通过
+router.post('/accept',async(req,res)=>{
+    let {_id,status} = req.body.info
+    
+    await ReportModel.updateOne({_id:_id},{$set:{status:!status}})
+    res.send({
+        code:200,
+        msg:'验收成功'
+    })
+})
 module.exports = router;

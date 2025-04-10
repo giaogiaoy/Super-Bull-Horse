@@ -38,13 +38,9 @@ const handleClose = (key: string, keyPath: string[]) => {
                 </el-icon>
                 <span>首页</span>
               </template>
-                <el-menu-item index="1-1">item one</el-menu-item>
-                <el-menu-item index="1-2">item two</el-menu-item>
-                <el-menu-item index="1-3">item three</el-menu-item>
-              <el-sub-menu index="1-4">
-                <template #title>item four</template>
-                <el-menu-item index="1-4-1">item one</el-menu-item>
-              </el-sub-menu>
+                <el-menu-item index="1-1">工作台</el-menu-item>
+                <el-menu-item index="1-2">物业大屏</el-menu-item>
+                <el-menu-item index="1-3">物业大屏配置</el-menu-item>
             </el-sub-menu>
             <el-sub-menu index="2">
               <template #title>
@@ -53,9 +49,9 @@ const handleClose = (key: string, keyPath: string[]) => {
                 </el-icon>
                 <span>内容</span>
               </template>
-                <el-menu-item index="2-1">item one</el-menu-item>
-                <el-menu-item index="2-2">item two</el-menu-item>
-                <el-menu-item index="2-3">item three</el-menu-item>
+                <el-menu-item index="2-1">社区活动</el-menu-item>
+                <el-menu-item index="2-2">社区公告</el-menu-item>
+                <el-menu-item index="2-3">信息公开</el-menu-item>
             </el-sub-menu>
             <el-sub-menu index="3">
               <template #title>
@@ -65,7 +61,7 @@ const handleClose = (key: string, keyPath: string[]) => {
                 <span>智慧管理</span>
               </template>
                 <el-menu-item index="3-1">员工管理</el-menu-item>
-                <el-menu-item index="3-2">item two</el-menu-item>
+                <el-menu-item index="3-2">维修处理</el-menu-item>
                 <el-menu-item index="3-3">item three</el-menu-item>
             </el-sub-menu>
 

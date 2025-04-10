@@ -1,25 +1,46 @@
 <template>
   <div class='video-page'>
-    <div class="video-page-container">
-      <div class="video-page-header">
-        <p>状态</p>
-        <el-select v-model="status" placeholder="Select" size="large" style="width: 240px">
-          <el-option v-for="item in Statusoptions" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-        <p>角色</p>
-        <el-select v-model="roal" placeholder="Select" size="large" style="width: 240px">
-          <el-option v-for="item in Roaloptions" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-        <p style="margin-left: 8px;">员工姓名</p>
-        <el-input v-model="ID" style="width: 240px;margin-right:8px;" placeholder="请输入证件号" />
-        <p>手机号</p>
-        <el-input v-model="name" style="width: 240px;margin-right: 40px;" placeholder="请输入姓名" />
+    <el-tabs type="border-card" class="demo-tabs" @tab-click="tableClick">
+      <el-tab-pane label="待审批">
+        <template #label>
+          <span class="custom-tabs-label">
+            <el-icon>
+              <calendar />
+            </el-icon>
+            <span>待审批</span>
+          </span>
+        </template>
+        <div class="video-page-header">
+            <p style="margin-left: 10px;">地区</p>
+            <el-select v-model="status" placeholder="Select" size="large" style="width: 240px">
+              <el-option v-for="item in Statusoptions" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+            <p style="margin-left: 8px;">员工姓名</p>
+            <el-input v-model="ID" style="width: 240px;margin-right:8px;" placeholder="请输入姓名" />
+            <p>手机号</p>
+            <el-input v-model="name" style="width: 240px;margin-right: 40px;" placeholder="请输入手机号" />
 
-      </div>
-      <el-button type="success" @click="handSearch()" style="width: 120px;margin-left: 10px;">查询</el-button>
-      <el-button type="primary" @click="dialogVisible = true" style="width: 120px;">新增</el-button>
+          </div>
+          <el-button type="success" @click="handSearch()" style="width: 120px;margin-left: 10px;">查询</el-button>
+          <el-button type="primary" @click="dialogVisible = true" style="width: 120px;">一键重置</el-button>
+      </el-tab-pane>
+      <el-tab-pane label="已审批" >
+        <div class="video-page-header">
+            <p style="margin-left: 10px;">状态</p>
+            <el-select v-model="status" placeholder="Select" size="large" style="width: 240px">
+              <el-option v-for="item in Statusoptions" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+            <p style="margin-left: 8px;">员工姓名</p>
+            <el-input v-model="ID" style="width: 240px;margin-right:8px;" placeholder="请输入姓名" />
+            <p>手机号</p>
+            <el-input v-model="name" style="width: 240px;margin-right: 40px;" placeholder="请输入手机号" />
 
-    </div>
+          </div>
+          <el-button type="success" @click="handSearch()" style="width: 120px;margin-left: 10px;">查询</el-button>
+          <el-button type="primary" @click="dialogVisible = true" style="width: 120px;">一键重置</el-button>
+      </el-tab-pane>
+    </el-tabs>
+吧
     <div class="video-page-bodys">
       <el-table :data="tableData" border style="width: 100%">
         <el-table-column type="selection" />
@@ -29,24 +50,24 @@
           </template>
         </el-table-column>
         <el-table-column prop="name" label="姓名" />
-        <el-table-column prop="img" label="账号">
+        <el-table-column prop="building" label="建筑">
+
+        </el-table-column>
+        <el-table-column prop="phone" label="手机号" />
+        <el-table-column prop="beganTime" label="施工开始时间" />
+        <el-table-column prop="date" label="施工工期" />
+        <el-table-column prop="date" label="具体位置" />
+        <el-table-column prop="roal" label="角色" />
+        <el-table-column prop="status" label="状态" >
           <template #default="scope">
-            <!-- <img :src="scope.row.img" alt="" width="80px" height="80px"> -->
-            <p style="color:rgb(105, 175, 254)" @click="handleLook(scope.row.img)">点击查看</p>
+            <el-tag>{{scope.row.status?'已审核':'未审核'}}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="ID" label="手机号" />
-        <el-table-column prop="address" label="人脸图片" />
-        <el-table-column prop="sex" label="性别" />
-
-        <el-table-column prop="desc" label="角色" />
-        <el-table-column prop="time" label="状态" />
         <el-table-column prop="address" label="操作" width="240">
           <template #default="scope">
             <div style="display: flex;justify-content: center;align-items: center;">
-              <el-button type="primary">修改</el-button>
-              <el-button type="primary">详情</el-button>
-              <el-button type="danger" @click="handShan(scope.row._id)">删除</el-button>
+              <el-button type="primary">查看</el-button>
+              <el-button type="primary" @click="handAccept(scope.row)">审批</el-button>
             </div>
           </template>
         </el-table-column>
@@ -110,10 +131,12 @@
 </template>
 
 <script setup>
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted,watchEffect } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+
 import zhCn from 'element-plus/es/locale/lang/zh-cn'  // 引入中文语言包
+
 const router = useRouter()
 const tableData = ref([])
 const totals = ref(0)
@@ -157,51 +180,17 @@ const handleLook = (img) => {
     showPreview.value = true
   } else {
     console.error('imageRef 未正确初始化或 showPreview 方法不存在');
-  }  
+  }
 };
-const roal = ref('')
-const pageCache = new Map()
-let pendingRequest = null
 async function getData() {
-  // let pendingRequest = null
-  const cacheKey = `page-${page.value}-size-${pageSize.value}-query-${name.value}-${ID.value}-${roal.value}`
-  // 2. 先检查缓存，命中则直接返回
-  console.log(cacheKey);
-  if (pageCache.has(cacheKey)) {
-    const cachedData = pageCache.get(cacheKey)
-    tableData.value = cachedData.data
-    totals.value = cachedData.total
-    return
-  }
-  // 3. 防止相同请求并发
-  if (pendingRequest?.cacheKey === cacheKey) return
-  try {
-    pendingRequest = { cacheKey }  // 锁定请求
-
-    const res = await axios.get('http://localhost:3000/people', {
-      params: {
-        page: page.value,
-        pageSize: pageSize.value,
-        name: name.value,
-        ID: ID.value,
-        roal: roal.value,
-        // status: status.value
-      }
-    })
-    // 3. 更新缓存和数据
-    pageCache.set(cacheKey, {
-      data: res.data.data,
-      total: res.data.total
-    })
-
-    tableData.value = res.data.data
-    totals.value = res.data.total
-
-  } catch (error) {
-    console.error('请求失败:', error)
-  } finally {
-    pendingRequest = null  // 释放锁
-  }
+  const res = await axios.get(`http://localhost:3000/report?page=${page.value}&pageSize=${pageSize.value}&name=${name.value}&ID=${ID.value}`)
+  tableData.value = res.data.data.filter(i=>i.status ==false)
+  totals.value = res.data.total
+}
+async function getData2(){
+  const res = await axios.get(`http://localhost:3000/report?page=${page.value}&pageSize=${pageSize.value}&name=${name.value}&ID=${ID.value}&status=${true}`)
+  tableData.value = res.data.data
+  totals.value = res.data.total
 }
 async function handShan(id) {
   const res = await axios.get(`http://localhost:3000/delete?id=${id}`)
@@ -280,7 +269,30 @@ const handleSubmit = async () => {
     submitting.value = false
   }
 }
-
+//切换状态
+const handHuan= () => {
+  console.log(1111);
+}
+const pan = ref('待审批')
+const tableClick = (tab) => {
+  console.log(tab.props.label);
+  pan.value = tab.props.label
+}
+watchEffect(()=>{
+  if(pan.value=='待审批'){
+    getData()
+  }else if(pan.value=='已审批'){
+    getData2()
+  }
+},[pan])
+//点击验收
+const handAccept=async(info)=>{
+  let res =  await axios.post('http://localhost:3000/accept',{info})
+  if(res.data.code==200){
+    alert('审核成功')
+    getData()
+  }
+}
 onMounted(() => {
   getData()
 })
@@ -297,7 +309,7 @@ onMounted(() => {
 
 .video-page-container {
   width: 99%;
-  height: 100px;
+  height: 200px;
   background-color: white;
   margin: 0 auto;
   margin-top: 20px;
@@ -314,15 +326,15 @@ onMounted(() => {
   margin-top: 15px;
   box-shadow: 5px 5px 10px rgba(164, 153, 153, 0.3);
   border-radius: 5px;
-  height: 800px;
+  height: 750px;
 }
 
 .video-page-header {
   display: flex;
-  height: 50px;
+  height: 60px;
   align-items: center;
   /* background-color: aqua; */
-  margin-top: 10px;
+  /* margin-top: 10px; */
 }
 
 .video-page-body {

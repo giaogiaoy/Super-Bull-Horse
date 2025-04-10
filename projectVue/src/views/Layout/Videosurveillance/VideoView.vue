@@ -127,6 +127,8 @@ import { useRouter } from 'vue-router'
 import dayjs from 'dayjs'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { ca } from 'element-plus/es/locales.mjs'
+
 const router = useRouter()
 const tableData = ref([])
 const totals = ref(0)
@@ -141,10 +143,41 @@ const ID = ref('')
 const TimeData = (time) => {
   return dayjs(time).format('YYYY-MM-DD HH:mm:ss')
 }
+const forceRefresh = ref(false)
+const pageList = new Map()
+let pendingRequest = null
+
 async function getData() {
-  const res = await axios.get(`http://localhost:3000/people?page=${page.value}&pageSize=${pageSize.value}&name=${name.value}&ID=${ID.value}`)
-  tableData.value = res.data.data
-  totals.value = res.data.total
+  const cacheKey = `${page.value}-${pageSize.value}-${name.value}-${ID.value}`
+  if (pageList.has(cacheKey)) {
+    const cachedData = pageList.get(cacheKey)
+    tableData.value = cachedData.data
+    totals.value = cachedData.total
+    return
+  }
+  if (pendingRequest && pendingRequest.cacheKey === cacheKey) return
+  try {
+    pendingRequest = { cacheKey }
+    const res = await axios.get('http://localhost:3000/people', {
+      params: {
+        page: page.value,
+        pageSize: pageSize.value,
+        name: name.value,
+        ID: ID.value
+      }
+    })
+    pageList.set(cacheKey, {
+      data: res.data.data,
+      total: res.data.total
+    })
+    tableData.value = res.data.data
+    totals.value = res.data.total
+  } catch (error) {
+    console.log(error)
+  } finally {
+    pendingRequest = null
+    forceRefresh.value = false
+  }
 }
 async function handShan(id) {
   try {
@@ -163,6 +196,8 @@ async function handShan(id) {
     if (res.data.code === 200) {
       ElMessage.success('删除成功')
       // 刷新数据
+      pageList.clear()
+      forceRefresh.value=true
       getData()
       // 清空选择
     } else {
@@ -256,7 +291,9 @@ const handleSubmit = async () => {
       if (res.data.code == 200) {
         dialogVisible.value = false
         formRef.value.resetFields()
-        getData()
+        forceRefresh.value = true
+        pageList.clear()
+        await getData() // 确保等待数据加载完成
         alert('更新成功')
       }
     } else {
@@ -267,7 +304,9 @@ const handleSubmit = async () => {
       if (res.data.code == 200) {
         dialogVisible.value = false
         formRef.value.resetFields()
-        getData()
+        forceRefresh.value = true
+        pageList.clear()
+        await getData() // 确保等待数据加载完成
         alert('添加成功')
       }
     }
@@ -275,6 +314,7 @@ const handleSubmit = async () => {
     console.error(error)
   } finally {
     submitting.value = false
+    // forceRefresh.value = false
   }
 }
 //上传图片开始--------------------------------------------------------------
@@ -355,8 +395,9 @@ const handleBatchDelete = async () => {
 
     if (res.data.code === 200) {
       ElMessage.success('删除成功')
+      forceRefresh.value=true
       // 刷新数据
-      getData()
+      await getData()
       // 清空选择
       multipleSelection.value = []
     } else {
