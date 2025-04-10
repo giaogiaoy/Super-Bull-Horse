@@ -30,8 +30,8 @@ router.post("/phone", async (req, res) => {
       // 工程代码泄露可能会导致 AccessKey 泄露，并威胁账号下所有资源的安全性。以下代码示例仅供参考。
       // 建议使用更安全的 STS 方式，更多鉴权访问方式请参见：https://help.aliyun.com/document_detail/378664.html。
       let config = new OpenApi.Config({
-        accessKeyId: accessKeyIds,
-        accessKeySecret: accessKeySecrets,
+        accessKeyId: process.env.ACCESS_KEY_ID,
+        accessKeySecret: process.env.ACCESS_KEY_SECRET
         // regionId: 'cn-hangzhou',
       });
       // Endpoint 请参考 https://api.aliyun.com/product/Dysmsapi
