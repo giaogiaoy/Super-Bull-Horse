@@ -31,7 +31,7 @@ const router = createRouter({
         {
           path:"quanxianguanli",  //权限管理
           name:"quanxianguanli",
-          component: () => import('@/views/Layout/Content Management/QuanXianGuanLi.vue'),
+          component: () => import('@/views/Layout/quanxianguanli/quanxianguanli.vue'),
         }
       ]
     },
