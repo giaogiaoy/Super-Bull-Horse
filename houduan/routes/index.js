@@ -1,10 +1,14 @@
 var express = require("express");
 var router = express.Router();
-var { CAModel } = require("../MGdb/mgdb");
+var { CAModel,peopleModel,ReportModel,TravelrecordModel,juesemodel, luyoumodel, yonghumodel } = require("../MGdb/mgdb");
 const path = require("path");
 const fs = require("fs-extra");
 const multer = require("multer");
 const crypto = require("crypto");
+var multiparty = require('multiparty');
+var xlsx = require("node-xlsx").default;
+const jwt = require('jsonwebtoken');
+
 // 文件存储配置
 const UPLOAD_DIR = path.resolve(process.cwd(), "uploads");
 const TEMP_DIR = path.join(UPLOAD_DIR, "temp");
@@ -285,192 +289,7 @@ router.post(
   }
 );
 
-// 文件合并接口
-// router.post("/merge1", async (req, res) => {
-//   try {
-//     // 如果是暂停状态，返回特殊状态码
-//     if (req.aborted) {
-//       return res.status(499).json({
-//         code: 499,
-//         message: "上传已暂停",
-//       });
-//     }
 
-//     // console.log("合并请求参数:", req.body);
-//     if (!req.body.size || isNaN(Number(req.body.size))) {
-//       return res.status(400).json({
-//         error: "参数错误",
-//         message: "缺少有效的文件大小(size)",
-//       });
-//     }
-//     const { hash, name, total } = req.body;
-
-//     // console.log("合并请求参数:", { hash, name, total });
-
-//     // 验证必要参数
-//     if (!hash || typeof hash !== "string") {
-//       return res.status(400).json({
-//         error: "参数错误",
-//         message: "缺少有效的文件哈希值(hash)",
-//       });
-//     }
-//     if (!name || typeof name !== "string") {
-//       return res.status(400).json({
-//         error: "参数错误",
-//         message: "缺少有效的文件名(name)",
-//       });
-//     }
-//     if (!total || isNaN(Number(total))) {
-//       return res.status(400).json({
-//         error: "参数错误",
-//         message: "缺少有效的总分片数(total)",
-//       });
-//     }
-
-//     const ext = path.extname(name);
-//     const finalPath = path.resolve(FINAL_DIR, `${hash}${ext}`);
-//     const chunkDir = path.resolve(TEMP_DIR, hash);
-//     // console.log("分片目录路径:", chunkDir);
-
-//     // 如果是暂停状态，不删除分片目录
-//     if (!req.aborted && fs.existsSync(chunkDir)) {
-//       const chunks = fs.readdirSync(chunkDir);
-//       if (chunks.length < Number(total)) {
-//         return res.status(400).json({
-//           error: "上传未完成",
-//           message: "文件上传被中断，请继续上传",
-//           uploaded: chunks.length,
-//           total: Number(total),
-//         });
-//       }
-//     }
-
-//     // 检查目录权限
-//     try {
-//       await fs.access(TEMP_DIR, fs.constants.R_OK | fs.constants.W_OK);
-//       await fs.access(FINAL_DIR, fs.constants.R_OK | fs.constants.W_OK);
-//     } catch (err) {
-//       console.error("目录权限错误:", err);
-//       return res.status(500).json({
-//         error: "权限错误",
-//         message: "无法访问上传目录，请检查目录权限",
-//       });
-//     }
-
-//     // 获取分片文件列表前确保目录存在
-//     if (!fs.existsSync(chunkDir)) {
-//       console.error("分片目录不存在:", chunkDir);
-//       return res.status(400).json({
-//         error: "分片不存在",
-//         message: `找不到分片目录: ${hash}`,
-//       });
-//     }
-
-//     // // 移动调试日志到正确位置
-//     const chunks = fs
-//       .readdirSync(chunkDir)
-//       .filter((file) => {
-//         const base = path.basename(file);
-//         return !isNaN(parseInt(base.split(".")[0]));
-//       })
-//       .sort((a, b) => {
-//         const aIndex = parseInt(path.basename(a).split(".")[0]);
-//         const bIndex = parseInt(path.basename(b).split(".")[0]);
-//         return aIndex - bIndex;
-//       });
-
-//     // 移动调试日志到正确位置
-//     // console.log("分片目录路径:", chunkDir);
-//     // console.log("实际分片文件:", chunks);
-//     // console.log("预期分片数量:", total);
-
-//     // 验证分片数量
-//     if (chunks.length !== Number(total)) {
-//       return res.status(400).json({
-//         error: "分片数量不符",
-//         expected: total,
-//         actual: chunks.length,
-//       });
-//     }
-
-//     // 添加分片目录检查
-//     if (!fs.existsSync(chunkDir)) {
-//       const tempDirContents = fs.readdirSync(TEMP_DIR);
-//       console.error("临时目录内容:", tempDirContents);
-//       return res.status(400).json({
-//         error: "分片不存在",
-//         message: `找不到分片目录: ${chunkDir}`,
-//       });
-//     }
-
-//     // 创建可写流前确保目标目录存在
-//     await fs.ensureDir(FINAL_DIR);
-//     // const writeStream = fs.createWriteStream(finalPath);
-
-//     try {
-//       // 获取并排序分片文件（增强排序逻辑）
-//       const chunks = fs.readdirSync(chunkDir);
-//       const sortedChunks = chunks
-//         .filter((file) => !isNaN(parseInt(path.basename(file).split(".")[0]))) // 过滤有效分片
-//         .sort((a, b) => {
-//           const aIndex = parseInt(path.basename(a).split(".")[0]);
-//           const bIndex = parseInt(path.basename(b).split(".")[0]);
-//           return aIndex - bIndex;
-//         });
-
-//       // 验证分片数量
-//       if (sortedChunks.length !== Number(total)) {
-//         return res.status(400).json({
-//           error: "分片数量不符",
-//           expected: total,
-//           actual: sortedChunks.length,
-//         });
-//       }
-//       // 创建可写流之前确保目标目录存在
-//       await fs.ensureDir(FINAL_DIR);
-//       const writeStream = fs.createWriteStream(finalPath);
-
-//       // 合并分片
-//       for (const chunk of sortedChunks) {
-//         const chunkPath = path.resolve(chunkDir, chunk);
-
-//         try {
-//           const data = await fs.readFile(chunkPath);
-//           await new Promise((resolve, reject) => {
-//             writeStream.write(data, (err) => {
-//               if (err) reject(err);
-//               else resolve();
-//             });
-//           });
-//           // 立即删除已处理的分片
-//           await fs.unlink(chunkPath).catch(console.error);
-//         } catch (err) {
-//           console.error(`处理分片 ${chunk} 失败:`, err);
-//           throw new Error(`分片 ${chunk} 处理失败: ${err.message}`);
-//         }
-//       }
-
-//       writeStream.end();
-//       await new Promise((resolve) => writeStream.on("finish", resolve));
-
-//       // 改为使用 remove 方法删除目录（兼容非空目录）
-//       await fs.remove(chunkDir).catch(console.error);
-
-//       res.json({
-//         url: `/uploads/final/${hash}${ext}`,
-//         message: "合并成功",
-//       });
-//     } catch (err) {
-//       throw new Error(`文件合并失败: ${err.message}`);
-//     }
-//   } catch (err) {
-//     console.error("合并错误:", err);
-//     res.status(500).json({
-//       error: "合并失败",
-//       details: err.message,
-//     });
-//   }
-// });
 
 router.post("/merge", async (req, res) => {
   try {
@@ -560,4 +379,242 @@ router.post("/merge", async (req, res) => {
     });
   }
 });
+
+
+
+//获取数据
+router.get('/people', async function(req, res, next) {
+    const page = req.query.page
+    const pageSize = req.query.pageSize
+    const sou = {}
+    const name = req.query.name
+    const ID = req.query.ID
+    if(name){
+        sou.name = new RegExp(name)
+    }
+    if(ID){
+        sou.ID = ID
+    }
+    let data = await peopleModel.find(sou).skip((page-1)*pageSize).limit(pageSize)
+    let total = await peopleModel.find(sou).countDocuments()
+    res.send({
+        code:200,
+        data:data,
+        total:total
+    })
+});
+
+//删除关怀人员信息
+router.get('/delete', async function(req, res, next) {
+    
+    let id = req.query.id
+    console.log(req.query.id);
+    await peopleModel.deleteOne({_id:id})
+    res.send({
+        code:200    
+    })
+
+});
+//添加关怀人员信息
+router.post('/add', async function(req, res, next) {
+    await peopleModel.create(req.body)
+    res.send({
+        code:200    
+    })
+});
+//更新关怀人员信息
+router.post('/updates', async function(req, res, next) {
+    let id = req.body.IDS
+    console.log(id);
+    // delete req.body.id
+    await peopleModel.updateOne({_id:id},req.body)
+    res.send({
+        code:200    
+    })
+});
+//批量删除
+router.post('/deleteBatch', async function(req, res, next) {
+    let ids = req.body.ids
+    console.log(ids);
+    await peopleModel.deleteMany({_id:{$in:ids}})
+    res.send({
+        code:200    
+    })
+});
+//添加图片
+router.post('/upload', (req, res) => {
+    const uploadDir = path.join(__dirname, '../upload')
+   console.log(uploadDir);
+    console.log(11111);
+    const form = new multiparty.Form({ uploadDir });
+    form.parse(req, (err, fields, files) => {
+      if (err) {
+        return res.status(500).json({ code: 500, message: '文件解析失败' });
+      }
+      // 获取上传的文件对象
+      const file = files.file[0]; // 假设前端字段名是'file'
+      
+      // 生成新的文件名（避免覆盖）
+      const ext = path.extname(file.originalFilename);
+      const newFilename = `${Date.now()}${ext}`;
+      const newPath = path.join(uploadDir, newFilename);
+      // 重命名文件
+      fs.rename(file.path, newPath, (err) => {
+        if (err) {
+          return res.status(500).json({ code: 500, message: '文件保存失败' });
+        }
+        // 返回访问URL (确保你的Express配置了静态文件服务)
+        const fileUrl = `http://localhost:3000/upload/${newFilename}`;
+        console.log(fileUrl);
+        res.json({ code: 200, url: fileUrl });
+      });
+    });
+  });
+
+//获取维修报备信息
+router.get('/report',async(req,res)=>{
+    const page = req.query.page
+    const pageSize = req.query.pageSize
+    const sou = {}
+    const name = req.query.name
+    const ID = req.query.ID
+    const status = req.query.status
+    if(name){
+        sou.name = new RegExp(name)
+    }
+    if(ID){
+        sou.ID = ID
+    }
+    if(status){
+        sou.status = status
+    }
+    let data = await ReportModel.find(sou).skip((page-1)*pageSize).limit(pageSize)
+    let total = await ReportModel.find(sou).countDocuments()
+    res.send({
+        code:200,
+        data:data,
+        total:total
+    })
+})
+//点击验收通过
+router.post('/accept',async(req,res)=>{
+    let {_id,status} = req.body.info
+    
+    await ReportModel.updateOne({_id:_id},{$set:{status:!status}})
+    res.send({
+        code:200,
+        msg:'验收成功'
+    })
+})
+
+
+
+const Dysmsapi20170525 = require('@alicloud/dysmsapi20170525');
+const OpenApi = require('@alicloud/openapi-client');
+const Util = require('@alicloud/tea-util');
+const Tea = require('@alicloud/tea-typescript');
+let accessKeyIds = ''
+let accessKeySecrets = ''
+//用户角色管理
+router.post("/phone", async (req, res) => {
+  let codes = req.body.code;
+  let phone = req.body.phone;
+  class Client {
+
+    /**
+     * 使用AK&SK初始化账号Client
+     * @return Client
+     * @throws Exception
+     */
+    static createClient() {
+      // 工程代码泄露可能会导致 AccessKey 泄露，并威胁账号下所有资源的安全性。以下代码示例仅供参考。
+      // 建议使用更安全的 STS 方式，更多鉴权访问方式请参见：https://help.aliyun.com/document_detail/378664.html。
+      let config = new OpenApi.Config({
+        accessKeyId: process.env.ACCESS_KEY_ID,
+        accessKeySecret: process.env.ACCESS_KEY_SECRET
+        // regionId: 'cn-hangzhou',
+      });
+      // Endpoint 请参考 https://api.aliyun.com/product/Dysmsapi
+      config.endpoint = `dysmsapi.aliyuncs.com`;
+      return new Dysmsapi20170525.default(config);
+    }
+
+
+    static async main(args) {
+      let client = Client.createClient();
+      let sendSmsRequest = new Dysmsapi20170525.SendSmsRequest({
+        signName: '阿里云短信测试',
+        templateCode: 'SMS_154950909',
+        phoneNumbers: phone,
+        templateParam: `{"code":${codes}`,
+      });
+      let runtime = new Util.RuntimeOptions({});
+      try {
+        // 复制代码运行请自行打印 API 的返回值
+        await client.sendSmsWithOptions(sendSmsRequest, runtime);
+      } catch (error) {
+        // 此处仅做打印展示，请谨慎对待异常处理，在工程项目中切勿直接忽略异常。
+        // 错误 message
+        console.log(error.message);
+        // 诊断地址
+        console.log(error.data["Recommend"]);
+        Util.default.assertAsString(error.message);
+      }
+    }
+
+  }
+  exports.Client = Client;
+  Client.main(process.argv.slice(2));
+
+  res.send({
+    code: 200,
+    msg: '验证码发送成功'
+  })
+})
+//登录
+router.post("/login", async (req, res) => {
+  let { phone, code, pwd } = req.body;
+  console.log(req.body);
+
+  
+  let accessToken = jwt.sign({ phone }, '123456', { expiresIn: '3h' });
+  let refreshToken = jwt.sign({ phone }, '123456', { expiresIn: '7d' });
+  res.send({
+    code: 200,
+    accessToken,
+    refreshToken,
+  })
+})
+//获取用户信息
+router.get("/userinfo", async (req, res) => {
+ let accesstoken = req.headers.accesstoken
+ let token = jwt.verify(accesstoken,'123456')
+ try{
+  let data = await yonghumodel.findOne({ phone:token.phone }).populate('role_id')
+  console.log(data.role_id);
+  //根据用户角色查询权限查新路由
+  let arr =[]
+  for (let i = 0; i < data.role_id.length; i++) {
+      console.log();
+      for(let j=0;j<data.role_id[i].urls.length;j++){
+         let a = await luyoumodel.findOne({_id:data.role_id[i].urls[j]})
+         arr.push(a)
+      }
+  }
+
+  res.send({
+    code:200,
+    msg:'获取用户信息成功',
+    data,
+    arr
+  })
+ }catch(err){
+  res.send({
+    code:500,
+    msg:'获取用户信息失败',
+  }) 
+ }
+})
+
+
 module.exports = router;

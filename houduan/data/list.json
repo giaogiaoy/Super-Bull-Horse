@@ -1,0 +1,16 @@
+[
+    {"name":"张三1","img":"http://localhost:3000/upload/1743941764617.png","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people","desc":"贫困户"},
+    {"name":"张三2","img":"http://localhost:3000/upload/1743941764617.png","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people","desc":"思想危险"},
+    {"name":"张三3","img":"http://localhost:3000/upload/1743941764617.png","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people","desc":"思想危险"},
+    {"name":"张三4","img":"http://localhost:3000/upload/1743941764617.png","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people","desc":"贫困户"},
+    {"name":"张三5","img":"http://localhost:3000/upload/1743941764617.png","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people","desc":"思想危险"},
+    {"name":"张三6","img":"http://localhost:3000/upload/1743941764617.png","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people","desc":"思想危险"},
+    {"name":"张三7","img":"http://localhost:3000/upload/1743941764617.png","address":"河北省邢台市","time":"2017-01-01","sex":"男","ID":"12345678901","type":"people","desc":"思想危险"}
+]
+[
+    {"name":"王五1","building":"桥","phone":"15630971392","beganTime":"2025-5-1","date":"150","status":false,"roal":"工头","address":"河北省邢台市桥东区"},
+    {"name":"王五2","building":"墙面","phone":"15630971392","beganTime":"2025-5-1","date":"150","status":false,"roal":"员工","address":"河北省邢台市桥西区"},
+    {"name":"王五3","building":"桥","phone":"15630971392","beganTime":"2025-5-1","date":"150","status":false,"roal":"员工","address":"河北省邢台市襄都区"},
+    {"name":"王五4","building":"桥","phone":"15630971392","beganTime":"2025-5-1","date":"150","status":false,"roal":"工头","address":"河北省邢台市信都区"},
+    {"name":"王五","building":"桥","phone":"15630971392","beganTime":"2025-5-1","date":"150","status":false,"roal":"工头","address":"河北省邢台市沙河市"}
+]
