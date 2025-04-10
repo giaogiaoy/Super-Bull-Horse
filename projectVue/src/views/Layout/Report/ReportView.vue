@@ -299,7 +299,7 @@ onMounted(() => {
 
 </script>
 
-<style>
+<style scoped>
 .video-page {
   background-color: rgb(240, 243, 248);
   width: 100%;
