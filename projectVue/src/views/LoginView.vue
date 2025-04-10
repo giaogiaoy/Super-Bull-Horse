@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-// const state = reactive({
-//   count: 0,
-// })
+// import { reactive, ref } from 'vue'
 
-const count = ref(0)
+
 </script>
 
 <template>
