@@ -6,7 +6,7 @@ mongoose.connect('mongodb+srv://giaogiaoyao:wangziyao1314@cluster0.de4wdak.mongo
 ).catch((err)=>{
     console.log('连接失败')
 })
-
+// 
 const peopleSchema = new mongoose.Schema({
     name:String, //姓名
     age:Number, //年龄
@@ -21,6 +21,7 @@ const peopleSchema = new mongoose.Schema({
 })
 const peopleModel = mongoose.model('people',peopleSchema,'people')
 
+//施工物
 const ReportSchema = new mongoose.Schema({
     name:String, //姓名
     building:String, //建筑
@@ -33,6 +34,20 @@ const ReportSchema = new mongoose.Schema({
     JtAddress:String,//具体地址
 })
 const ReportModel = mongoose.model('Report',ReportSchema,'Report')
+
+//
+const Travelrecord = new mongoose.Schema({
+   time:String,//通行时间
+   name:String,//姓名
+   ID:String,//身份证
+   phone:String,//手机号
+   type:String,//类型
+   address:String,//地址
+   img:String,//照片
+   status:Boolean,//状态
+   roal:String,//角色
+   JtAddress:String,//具体地址
+})
 module.exports={
-   peopleModel,ReportModel
+   peopleModel,ReportModel,Travelrecord
 }
