@@ -4,9 +4,9 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'app',
-      redirect: '/layout/home',
+      path: '/home', //首页
+      name: 'home',
+      component: () => import('@/views/Layout/Home/Home.vue'),
     },
     {
       path: '/login',   //登录
@@ -24,15 +24,15 @@ const router = createRouter({
       component: () => import('@/views/Layout/LayoutView.vue'),
       children:[
         {
-          path: '/layout/home', //首页
-          name: 'home',
-          component: () => import('@/views/Layout/Home/Home.vue'),
-        },
-        {
-          path:'/layout/communityactivities',  //社区活动
+          path:'communityactivities',  //社区活动
           name:'communityactivities',
           component: () => import('@/views/Layout/Content Management/CommunityActivities.vue'),
         },
+        {
+          path:"quanxianguanli",  //权限管理
+          name:"quanxianguanli",
+          component: () => import('@/views/Layout/Content Management/QuanXianGuanLi.vue'),
+        }
       ]
     },
     {

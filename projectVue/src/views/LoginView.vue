@@ -64,27 +64,25 @@ const handleLogin = () => {
   //登录
   if(loginType.value === 'account'){
     axios.post(`/login`,{phone:phone.value,pwd:password.value}).then(res=>{
-
       if(res.data.code==200){
         console.log(res.data)
         console.log(res.data.accessToken);
         localStorage.setItem("AccessToken",res.data.accessToken)
         localStorage.setItem("RefreshToken",res.data.refreshToken)
-        localStorage.setItem("user",res.data.data.user)
-        window.location.href = '/home'
+        localStorage.setItem("user",res.data.user)
+        window.location.href = '/layout'
         alert('登录成功')
       }
     })
   }else{
     axios.post(`/login`,{phone:phone.value,code:getcode.value}).then(res=>{
       console.log(res.data)
-      if(res.data.code==200){
+      if(getcode.value==code.value){
         console.log(res.data.accessToken);
-
         localStorage.setItem("AccessToken",res.data.accessToken)
         localStorage.setItem("RefreshToken",res.data.refreshToken)
-        localStorage.setItem("user",res.data.data.user)
-        window.location.href = '/home'
+        localStorage.setItem("user",res.data.user)
+        window.location.href = '/layout'
         alert('登录成功')
       }
     })

@@ -11,13 +11,13 @@ const http: AxiosInstance = axios.create({
 // 添加请求拦截器
 http.interceptors.request.use((config: AxiosRequestConfig) => {
     // 对token进行处理
-    const accessToken = localStorage.getItem('accessToken');
-    const refreshToken = localStorage.getItem('refreshToken');
+    const accessToken = localStorage.getItem('AccessToken');
+    const refreshToken = localStorage.getItem('RefreshToken');
     if (accessToken) {
-        config.headers!.Authorization = accessToken;
+        config.headers!.AccessToken = accessToken;
     }
     if (refreshToken) {
-        config.headers!.pass = refreshToken;
+        config.headers!.RefreshToken = refreshToken;
     }
 
     // 在发送请求之前做些什么
@@ -47,7 +47,7 @@ http.interceptors.response.use((response: AxiosResponse) => {
             localStorage.setItem('refreshToken', refreshToken);
 
             originalRequest.headers!.Authorization = accessToken;
-            originalRequest.headers!.pass = refreshToken;
+            originalRequest.headers!.RefreshToken = refreshToken;
             return http(originalRequest);
         } catch (error) {
             console.log('请重新登录'); // 打印提示信息

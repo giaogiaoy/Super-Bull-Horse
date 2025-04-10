@@ -1,13 +1,8 @@
-<script setup lang="ts">
-import { reactive, ref } from 'vue'
-
+<template>
+    <div>
+      23232323
+    </div>
+</template>
+<script lang="ts" setup>
 
 </script>
-
-<template>
-  <div>
-    <p>raest</p>
-  </div>
-</template>
-
-<style scoped></style>
