@@ -1,13 +1,9 @@
-<script setup lang="ts">
-import { reactive, ref } from 'vue'
-
-
+<script lang="ts">
+import { ref } from 'vue'
 </script>
 
 <template>
-  <div>
-    <p>raest</p>
-  </div>
+  <div></div>
 </template>
 
 <style scoped></style>
