@@ -1,3 +1,4 @@
+
 <template>
   <div class="common-layout">
     <el-container>
@@ -8,10 +9,10 @@
         </div>
       </el-header>
       <el-container>
-        <el-aside width="20%">
+        <el-aside width="15%">
           <div>
             <el-row class="tac">
-              <el-col :span="24">
+              <el-col :span="23">
                 <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
                   <el-sub-menu index="1">
                     <template #title>
@@ -62,3 +63,8 @@ function getUser() {
 }
 getUser()
 </script>
+<style scoped>
+.tac,.el-menu-vertical-demo{
+  width: 100%;
+}
+</style>

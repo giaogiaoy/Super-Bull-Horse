@@ -9,16 +9,27 @@ var usersRouter = require('./routes/users');
 var jwt = require('jsonwebtoken');
 var app = express();
 
+// 允许所有来源的请求
+app.use(cors())
+
+// 或者指定允许的来源
+app.use(cors({
+  origin: 'http://localhost:5173',  // 你的前端地址
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  // allowedHeaders: ['Content-Type', 'Authorization']
+}))
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/uploads/final', express.static(path.join(__dirname, 'uploads/final')));
+app.use('/upload',express.static(path.join(__dirname, 'upload')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
@@ -61,6 +72,7 @@ app.use((req, res, next) => {
       return res.status(401).send({ message: 'Unauthorized' }); // 如果验证失败，返回 401 Unauthorized
   }
 })
+
 
 
 // catch 404 and forward to error handler

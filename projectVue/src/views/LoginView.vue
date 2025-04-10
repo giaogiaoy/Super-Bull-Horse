@@ -70,7 +70,7 @@ const handleLogin = () => {
         localStorage.setItem("AccessToken",res.data.accessToken)
         localStorage.setItem("RefreshToken",res.data.refreshToken)
         localStorage.setItem("user",res.data.user)
-        window.location.href = '/layout'
+        window.location.href = '/layout/'
         alert('登录成功')
       }
     })
