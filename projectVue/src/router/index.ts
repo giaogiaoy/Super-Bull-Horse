@@ -47,7 +47,7 @@ const router = createRouter({
           path:'/layout/travelrecord',
           name:'setting',
           component: () => import('@/views/Layout/Travelrecord/TravelrecordView.vue'),
-        }
+        },
       ]
     },
     {

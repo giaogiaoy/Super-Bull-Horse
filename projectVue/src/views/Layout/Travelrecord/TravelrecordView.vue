@@ -2,21 +2,14 @@
   <div class='video-page'>
     <div class="video-page-container">
       <div class="video-page-header">
-        <p>状态</p>
-        <el-select v-model="status" placeholder="Select" size="large" style="width: 240px">
-          <el-option v-for="item in Statusoptions" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-        <p>角色</p>
-        <el-select v-model="roal" placeholder="Select" size="large" style="width: 240px">
-          <el-option v-for="item in Roaloptions" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-        <p style="margin-left: 8px;">员工姓名</p>
-        <el-input v-model="ID" style="width: 240px;margin-right:8px;" placeholder="请输入证件号" />
         <p>手机号</p>
-        <el-input v-model="name" style="width: 240px;margin-right: 40px;" placeholder="请输入姓名" />
+        <el-input v-model="name" style="width: 240px;margin-right: 40px;" placeholder="支持姓名、手机号模糊搜索" />
+        <p>日期</p>
+        <el-date-picker v-model="value1" type="daterange" range-separator="To" start-placeholder="Start date"
+          end-placeholder="End date" />
       </div>
-      <el-button type="success" @click="handSearch()" style="width: 120px;margin-left: 10px;">查询</el-button>
-      <el-button type="primary" @click="dialogVisible = true" style="width: 120px;">新增</el-button>
+
+      <el-button type="success" @click="handSearch()" style="width: 120px;margin-left: 10px;">导出通行记录</el-button>
     </div>
     <div class="video-page-bodys">
       <el-table :data="tableData" border style="width: 100%">
@@ -26,25 +19,23 @@
             <div>{{ $index + 1 }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="姓名" />
-        <el-table-column prop="img" label="账号">
+        <el-table-column prop="name" label="通行时间" />
+        <el-table-column prop="img" label="位置">
           <template #default="scope">
             <!-- <img :src="scope.row.img" alt="" width="80px" height="80px"> -->
             <p style="color:rgb(105, 175, 254)" @click="handleLook(scope.row.img)">点击查看</p>
           </template>
         </el-table-column>
-        <el-table-column prop="ID" label="手机号" />
-        <el-table-column prop="address" label="人脸图片" />
-        <el-table-column prop="sex" label="性别" />
+        <el-table-column prop="ID" label="姓名" />
+        <el-table-column prop="address" label="房屋" />
+        <el-table-column prop="sex" label="手机号" />
 
-        <el-table-column prop="desc" label="角色" />
-        <el-table-column prop="time" label="状态" />
+        <el-table-column prop="desc" label="图片" />
+        <el-table-column prop="time" label="出入类型" />
         <el-table-column prop="address" label="操作" width="240">
           <template #default="scope">
             <div style="display: flex;justify-content: center;align-items: center;">
-              <el-button type="primary">修改</el-button>
               <el-button type="primary">详情</el-button>
-              <el-button type="danger" @click="handShan(scope.row._id)">删除</el-button>
             </div>
           </template>
         </el-table-column>
@@ -112,6 +103,7 @@ import { reactive, ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'  // 引入中文语言包
+import * as XLSX from 'xlsx';
 const router = useRouter()
 const tableData = ref([])
 const totals = ref(0)
@@ -119,6 +111,7 @@ const page = ref(1)
 const pageSize = ref(5)
 const locale = zhCn  // 应用中文语言包
 const dialogVisible = ref(false)
+const value1 = ref('')
 const Statusoptions = [
   {
     value: true,
@@ -286,6 +279,11 @@ onMounted(() => {
 </script>
 
 <style>
+:deep(.custom-range-picker) {
+  --el-date-editor-width: 400px;
+  width: 400px;
+}
+
 .video-page {
   background-color: rgb(240, 243, 248);
   width: 100%;
@@ -318,6 +316,7 @@ onMounted(() => {
 .video-page-header {
   display: flex;
   height: 50px;
+  /* justify-content: space-between; */
   align-items: center;
   /* background-color: aqua; */
   margin-top: 10px;

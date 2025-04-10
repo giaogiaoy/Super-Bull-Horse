@@ -48,6 +48,7 @@ const Travelrecord = new mongoose.Schema({
    roal:String,//角色
    JtAddress:String,//具体地址
 })
+const TravelrecordModel = mongoose.model('Travelrecord',Travelrecord,'Travelrecord')
 module.exports={
-   peopleModel,ReportModel,Travelrecord
+   peopleModel,ReportModel,TravelrecordModel
 }
