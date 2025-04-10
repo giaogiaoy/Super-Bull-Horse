@@ -92,6 +92,7 @@ router.get("/userinfo", async (req, res) => {
  try{
   let data = await yonghumodel.findOne({ phone:token.phone }).populate('role_id')
   console.log(data.role_id);
+  let user= await yonghumodel.findOne({phone:token.phone})
   //根据用户角色查询权限查新路由
   let arr =[]
   for (let i = 0; i < data.role_id.length; i++) {
@@ -106,7 +107,8 @@ router.get("/userinfo", async (req, res) => {
     code:200,
     msg:'获取用户信息成功',
     data,
-    arr
+    arr,
+    user
   })
  }catch(err){
   res.send({
@@ -114,6 +116,10 @@ router.get("/userinfo", async (req, res) => {
     msg:'获取用户信息失败',
   }) 
  }
+})
+
+router.get("/getusers",async(req,res)=>{
+  
 })
 
 module.exports = router;

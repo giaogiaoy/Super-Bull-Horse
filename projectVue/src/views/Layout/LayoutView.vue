@@ -2,16 +2,16 @@
   <div class="common-layout">
     <el-container>
       <el-header>
-        <div style="width: 100%;">
-          <span>121212</span>
-          <span>232333</span>
+        <div style="width: 100%;display: flex;justify-content: space-around;">
+          <div>LOGO</div>
+          <div></div>
         </div>
       </el-header>
       <el-container>
-        <el-aside width="50%">
+        <el-aside width="20%">
           <div>
             <el-row class="tac">
-              <el-col :span="12">
+              <el-col :span="24">
                 <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
                   <el-sub-menu index="1">
                     <template #title>
@@ -29,8 +29,6 @@
               </el-col>
             </el-row>
           </div>
-
-
         </el-aside>
         <el-main>
           <router-view></router-view>
