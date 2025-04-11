@@ -21,7 +21,7 @@ app.use(router)
 app.use(ElementPlus,{
   locale: zhCn // 配置中文
 })
-app.use(VueAmazingUI)
+// app.use(VueAmazingUI)
 app.use(ElementPlus)
 
 app.mount('#app')

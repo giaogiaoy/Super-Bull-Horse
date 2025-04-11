@@ -33,6 +33,11 @@ app.use('/upload',express.static(path.join(__dirname, 'upload')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
+//路由
+var xzxRouter = require('./routes/xzx');
+app.use('/xzx', xzxRouter);
+
+
 // 自定义中间件，用于处理 JWT 验证
 app.use((req, res, next) => {
   // 定义不需要验证的路径

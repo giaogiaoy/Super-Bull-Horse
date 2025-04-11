@@ -3,43 +3,43 @@
     <div class="video-page-container">
       <div class="video-page-header">
         <p>手机号</p>
-        <el-input v-model="name" style="width: 240px;margin-right: 40px;" placeholder="支持姓名、手机号模糊搜索" />
+        <el-input v-model="pname" style="width: 240px;margin-right: 40px;" placeholder="支持姓名、手机号模糊搜索" />
         <div style="width: 500px;">
           <p style="float: left;margin-top: 5px;margin-right:20px ;">日期</p>
           <el-date-picker v-model="value1" type="daterange" range-separator="To" start-placeholder="Start date"
-            end-placeholder="End date" />
-          <button style="height: 30px;background-color: rgb(54, 120, 252);border: none;color: white;width: 60px;">搜索</button>
+            end-placeholder="End date" @change="handleChangeDate" />
+          <button
+            style="height: 30px;background-color: rgb(54, 120, 252);border: none;color: white;width: 60px;" @click="handSearch">搜索</button>
         </div>
 
       </div>
-
-      <el-button type="success" @click="exportToExcel" style="width: 120px;margin-left: 10px;">导出通行记录</el-button>
+      <!-- <el-button type="success" @click="exportToExcel" style="width: 120px;margin-left: 10px;">导出通行记录</el-button> -->
+      <button @click="exportToExcel"
+        style="width: 120px;margin-left: 10px;height: 30px;background-color: deepskyblue;border: none;border-radius: 10px;">导出通行记录</button>
     </div>
     <div class="video-page-bodys">
       <el-table :data="tableData" border style="width: 100%">
         <el-table-column type="selection" />
-        <el-table-column prop="index" label="序号">
-          <template #default="{ $index }">
-            <div>{{ $index + 1 }}</div>
-          </template>
+        <el-table-column prop="time" label="通行时间" />
+        <el-table-column prop="address" label="位置">
         </el-table-column>
-        <el-table-column prop="name" label="通行时间" />
-        <el-table-column prop="img" label="位置">
+        <el-table-column prop="name" label="姓名" />
+        <el-table-column prop="JtAddress" label="房屋">
           <template #default="scope">
-            <!-- <img :src="scope.row.img" alt="" width="80px" height="80px"> -->
-            <p style="color:rgb(105, 175, 254)" @click="handleLook(scope.row.img)">点击查看</p>
+            <p>{{ scope.row.JtAddress.fullAddress }}</p>
           </template>
         </el-table-column>
-        <el-table-column prop="ID" label="姓名" />
-        <el-table-column prop="address" label="房屋" />
-        <el-table-column prop="sex" label="手机号" />
-
-        <el-table-column prop="desc" label="图片" />
-        <el-table-column prop="time" label="出入类型" />
+        <el-table-column prop="phone" label="手机号" />
+        <el-table-column prop="img" label="图片">
+          <template #default="scope">
+            <img :src='scope.row.img' alt="" width="80px" height="80px">
+          </template>
+        </el-table-column>
+        <el-table-column prop="type" label="出入类型" />
         <el-table-column prop="address" label="操作" width="240">
           <template #default="scope">
             <div style="display: flex;justify-content: center;align-items: center;">
-              <el-button type="primary">详情</el-button>
+              <el-button type="primary" @click="handXq(scope.row)">详情</el-button>
             </div>
           </template>
         </el-table-column>
@@ -49,42 +49,29 @@
         @size-change="handleSizeChange" @current-change="handleCurrentChange" background>
       </el-pagination>
       <!-- 添加模态框 -->
-      <el-dialog v-model="dialogVisible" title="新增关怀人员" width="500" :before-close="handleClose">
+      <el-dialog v-model="dialogVisible" title="新增关怀人员" width="800" :before-close="handleClose">
         <el-form ref="formRef" :model="formData" :rules="rules" label-width="120px" label-position="left" size="large">
           <el-form-item label="姓名" prop="name">
             <el-input v-model="formData.name" placeholder="请输入姓名" clearable></el-input>
           </el-form-item>
-          <el-form-item label="身份证号" prop="idCard">
-            <el-input v-model="formData.idCard" placeholder="请输入18位身份证号" maxlength="18" show-word-limit></el-input>
-          </el-form-item>
-          <el-row :gutter="20">
-            <el-col :span="12">
-              <el-form-item label="性别" prop="gender">
-                <el-radio-group v-model="formData.gender">
-                  <el-radio label="男">男</el-radio>
-                  <el-radio label="女">女</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="年龄" prop="age">
-                <el-input-number v-model="formData.age" :min="0" :max="120" controls-position="right"></el-input-number>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-form-item label="地址" prop="address">
+          <el-form-item label="位置" prop="address">
             <el-input v-model="formData.address" :options="addressOptions" placeholder="请填写省市区" clearable>
             </el-input>
           </el-form-item>
-          <el-form-item label="内容描述" prop="description">
-            <el-input v-model="formData.description" type="textarea" :rows="3" placeholder="请输入详细描述" maxlength="200"
-              show-word-limit></el-input>
-          </el-form-item>
           <el-form-item label="类型" prop="type">
-            <el-select v-model="formData.type" placeholder="请选择类型" style="width: 100%" clearable>
-              <el-option v-for="item in typeOptions" :key="item.value" :label="item.label"
-                :value="item.value"></el-option>
-            </el-select>
+            <el-input v-model="formData.type" :options="addressOptions" placeholder="请填写省市区" clearable/>
+          </el-form-item>
+          <el-form-item label="具体地址" prop="type">
+            <el-input v-model="formData.JtAddress.fullAddress" :options="addressOptions" placeholder="请填写省市区" clearable/>
+          </el-form-item>
+          <el-form-item label="时间" prop="type">
+            <el-input v-model="formData.time" :options="addressOptions" placeholder="请填写省市区" clearable/>
+          </el-form-item>
+          <el-form-item label="照片" prop="type">
+            <img :src="formData.img" alt="" width="80px" height="80px">
+          </el-form-item>
+          <el-form-item label="手机号" prop="type">
+            <el-input v-model="formData.phone" :options="addressOptions" placeholder="请填写省市区" clearable/>
           </el-form-item>
         </el-form>
         <template #footer>
@@ -116,35 +103,21 @@ const pageSize = ref(5)
 const locale = zhCn  // 应用中文语言包
 const dialogVisible = ref(false)
 const value1 = ref('')
-const Statusoptions = [
-  {
-    value: true,
-    label: '启用',
-  },
-  {
-    value: false,
-    label: '禁用',
-  },
-]
-const Roaloptions = [
-  {
-    value: 'admin',
-    label: '管理员',
-  },
-  {
-    value: 'editor',
-    label: '编辑',
-  },
-  {
-    value: 'visitor',
-    label: '浏览者',
-  },
-]
+const pname = ref('')
 //图片预览
 const imageRef = ref(null)
 const showPreview = ref(false)
 const srcList = ref([])
 const currentIndex = ref(0)
+//更改时间
+const handleChangeDate = () => {
+  console.log(value1.value[0].toISOString().split('T')[0],'11111');
+}
+//搜索
+const handSearch = () => {
+  pageCache.clear()
+  getData()
+}
 const handleLook = (img) => {
   if (img) {
     srcList.value = Array.isArray(img) ? img : [img]
@@ -159,7 +132,7 @@ const pageCache = new Map()
 let pendingRequest = null
 async function getData() {
   // let pendingRequest = null
-  const cacheKey = `page-${page.value}-size-${pageSize.value}-query-${name.value}-${ID.value}-${roal.value}`
+  const cacheKey = `page-${page.value}-size-${pageSize.value}-query-${pname.value}`
   // 2. 先检查缓存，命中则直接返回
   console.log(cacheKey);
   if (pageCache.has(cacheKey)) {
@@ -172,16 +145,18 @@ async function getData() {
   if (pendingRequest?.cacheKey === cacheKey) return
   try {
     pendingRequest = { cacheKey }  // 锁定请求
-
-    const res = await axios.get('http://localhost:3000/people', {
-      params: {
-        page: page.value,
-        pageSize: pageSize.value,
-        name: name.value,
-        ID: ID.value,
-        roal: roal.value,
-        // status: status.value
-      }
+    const params = {
+      page: page.value,
+      pageSize: pageSize.value,
+      name: pname.value
+    };
+    if (value1.value[0] && value1.value[1]) {
+      // 方法1：传递日期字符串 (推荐)
+      params.startTime = value1.value[0].toISOString().split('T')[0];
+      params.endTime = value1.value[1].toISOString().split('T')[0];
+    }
+    const res = await axios.get('http://localhost:3000/xzx/travelrecord', {
+      params: params
     })
     // 3. 更新缓存和数据
     pageCache.set(cacheKey, {
@@ -217,63 +192,26 @@ const handleCurrentChange = (val) => {
   page.value = val
   getData()
 }
-//查询
-async function handSearch() {
-  // const res = await axios.get(`http://localhost:3000/search?ID=${ID.value}&name=${name.value}`)
-  getData()
-}
-//表单提交
 const formData = reactive({
   name: '',
-  idCard: '',
-  gender: '男',
-  age: 18,
-  address: [],
-  description: '',
-  type: ''
+  address: '',
+  type: '',
+  img: '',
+  time: '',
+  JtAddress: '',
+  phone: '',
+  ID: ''
 })
-// 表单验证规则
-const rules = reactive({
-  name: [
-    { required: true, message: '请输入姓名', trigger: 'blur' },
-    { min: 2, max: 10, message: '长度在2到10个字符', trigger: 'blur' }
-  ],
-  idCard: [
-    { required: true, message: '请输入身份证号', trigger: 'blur' },
-    { pattern: /^\d{17}[\dXx]$/, message: '请输入正确的身份证号码', trigger: 'blur' }
-  ],
-  gender: [{ required: true, message: '请选择性别', trigger: 'change' }],
-  age: [{ required: true, message: '请输入年龄', trigger: 'blur' }],
-  address: [{ required: true, message: '请选择地址', trigger: 'change' }],
-  type: [{ required: true, message: '请选择类型', trigger: 'change' }]
-})
-// 地址选项数据
-
-// 类型选项数据
-const typeOptions = [
-  { value: '1', label: '人员' },
-  { value: '2', label: '建筑' },
-]
-// 表单引用
-const formRef = ref(null)
-const submitting = ref(false)
-// 提交处理
-const handleSubmit = async () => {
-  try {
-    await formRef.value.validate()
-    submitting.value = true
-    // 这里可以调用API提交数据
-    // await api.addInfo(formData)
-    ElMessage.success('添加成功')
-    dialogVisible.value = false
-
-    // 重置表单
-    formRef.value.resetFields()
-  } catch (error) {
-    console.error(error)
-  } finally {
-    submitting.value = false
-  }
+const handXq=(info)=>{
+  dialogVisible.value=true
+  formData.name=info.name
+  formData.address=info.address
+  formData.type=info.type
+  formData.img=info.img
+  formData.time=info.time
+  formData.JtAddress=info.JtAddress
+  formData.phone=info.phone
+  formData.ID=info._id
 }
 //导出文件
 function exportToExcel() {
@@ -288,13 +226,13 @@ function exportToExcel() {
   filename = filename.endsWith('.xlsx') ? filename : `${filename}.xlsx`
   // 3. 准备数据（处理嵌套对象、日期等）
   const exportData = tableData.value.map(item => ({
-    '通行时间': item.name,
-    '位置': item.img,
-    '姓名': item.ID,
-    '房屋': item.address,
-    '手机号': item.sex,
-    '图片': item.desc,
-    '出入类型': item.time
+    '通行时间': item.time,
+    '位置': item.address,
+    '姓名': item.name,
+    '房屋': item.JtAddress,
+    '手机号': item.phone,
+    '图片': item.img,
+    '出入类型': item.type
   }))
   // 4. 创建Excel工作簿并导出
   const wb = XLSX.utils.book_new()
