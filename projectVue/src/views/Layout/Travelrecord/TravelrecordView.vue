@@ -2,21 +2,18 @@
   <div class='video-page'>
     <div class="video-page-container">
       <div class="video-page-header">
-        <p>状态</p>
-        <el-select v-model="status" placeholder="Select" size="large" style="width: 240px">
-          <el-option v-for="item in Statusoptions" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-        <p>角色</p>
-        <el-select v-model="roal" placeholder="Select" size="large" style="width: 240px">
-          <el-option v-for="item in Roaloptions" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-        <p style="margin-left: 8px;">员工姓名</p>
-        <el-input v-model="ID" style="width: 240px;margin-right:8px;" placeholder="请输入证件号" />
         <p>手机号</p>
-        <el-input v-model="name" style="width: 240px;margin-right: 40px;" placeholder="请输入姓名" />
+        <el-input v-model="name" style="width: 240px;margin-right: 40px;" placeholder="支持姓名、手机号模糊搜索" />
+        <div style="width: 500px;">
+          <p style="float: left;margin-top: 5px;margin-right:20px ;">日期</p>
+          <el-date-picker v-model="value1" type="daterange" range-separator="To" start-placeholder="Start date"
+            end-placeholder="End date" />
+          <button style="height: 30px;background-color: rgb(54, 120, 252);border: none;color: white;width: 60px;">搜索</button>
+        </div>
+
       </div>
-      <el-button type="success" @click="handSearch()" style="width: 120px;margin-left: 10px;">查询</el-button>
-      <el-button type="primary" @click="dialogVisible = true" style="width: 120px;">新增</el-button>
+
+      <el-button type="success" @click="exportToExcel" style="width: 120px;margin-left: 10px;">导出通行记录</el-button>
     </div>
     <div class="video-page-bodys">
       <el-table :data="tableData" border style="width: 100%">
@@ -26,25 +23,23 @@
             <div>{{ $index + 1 }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="姓名" />
-        <el-table-column prop="img" label="账号">
+        <el-table-column prop="name" label="通行时间" />
+        <el-table-column prop="img" label="位置">
           <template #default="scope">
             <!-- <img :src="scope.row.img" alt="" width="80px" height="80px"> -->
             <p style="color:rgb(105, 175, 254)" @click="handleLook(scope.row.img)">点击查看</p>
           </template>
         </el-table-column>
-        <el-table-column prop="ID" label="手机号" />
-        <el-table-column prop="address" label="人脸图片" />
-        <el-table-column prop="sex" label="性别" />
+        <el-table-column prop="ID" label="姓名" />
+        <el-table-column prop="address" label="房屋" />
+        <el-table-column prop="sex" label="手机号" />
 
-        <el-table-column prop="desc" label="角色" />
-        <el-table-column prop="time" label="状态" />
+        <el-table-column prop="desc" label="图片" />
+        <el-table-column prop="time" label="出入类型" />
         <el-table-column prop="address" label="操作" width="240">
           <template #default="scope">
             <div style="display: flex;justify-content: center;align-items: center;">
-              <el-button type="primary">修改</el-button>
               <el-button type="primary">详情</el-button>
-              <el-button type="danger" @click="handShan(scope.row._id)">删除</el-button>
             </div>
           </template>
         </el-table-column>
@@ -112,6 +107,7 @@ import { reactive, ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'  // 引入中文语言包
+import * as XLSX from 'xlsx';
 const router = useRouter()
 const tableData = ref([])
 const totals = ref(0)
@@ -119,6 +115,7 @@ const page = ref(1)
 const pageSize = ref(5)
 const locale = zhCn  // 应用中文语言包
 const dialogVisible = ref(false)
+const value1 = ref('')
 const Statusoptions = [
   {
     value: true,
@@ -278,7 +275,34 @@ const handleSubmit = async () => {
     submitting.value = false
   }
 }
-
+//导出文件
+function exportToExcel() {
+  if (tableData.value.length === 0) {
+    ElMessage.warning('没有数据可导出')
+    return
+  }
+  // 1. 弹窗让用户输入文件名
+  let filename = prompt('请输入导出文件名（不包含后缀）', '通行记录')
+  if (!filename) return // 用户取消输入
+  // 2. 确保文件名有.xlsx后缀
+  filename = filename.endsWith('.xlsx') ? filename : `${filename}.xlsx`
+  // 3. 准备数据（处理嵌套对象、日期等）
+  const exportData = tableData.value.map(item => ({
+    '通行时间': item.name,
+    '位置': item.img,
+    '姓名': item.ID,
+    '房屋': item.address,
+    '手机号': item.sex,
+    '图片': item.desc,
+    '出入类型': item.time
+  }))
+  // 4. 创建Excel工作簿并导出
+  const wb = XLSX.utils.book_new()
+  const ws = XLSX.utils.json_to_sheet(exportData)
+  XLSX.utils.book_append_sheet(wb, ws, '通行记录')
+  XLSX.writeFile(wb, filename)
+  ElMessage.success('导出成功')
+}
 onMounted(() => {
   getData()
 })
@@ -286,6 +310,11 @@ onMounted(() => {
 </script>
 
 <style scoped>
+:deep(.custom-range-picker) {
+  --el-date-editor-width: 400px;
+  width: 400px;
+}
+
 .video-page {
   background-color: rgb(240, 243, 248);
   width: 100%;
@@ -318,6 +347,7 @@ onMounted(() => {
 .video-page-header {
   display: flex;
   height: 50px;
+  /* justify-content: space-between; */
   align-items: center;
   /* background-color: aqua; */
   margin-top: 10px;
@@ -331,7 +361,8 @@ onMounted(() => {
   margin-right: 10px;
   width: 100px;
   padding: 5px 0px;
-
+  background-color: var(--el-color-success);
+  border-color: var(--el-color-success);
 }
 
 .video-page-header .el-select {

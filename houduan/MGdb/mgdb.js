@@ -121,7 +121,7 @@ const ReportSchema = new mongoose.Schema({
 })
 const ReportModel = mongoose.model('Report',ReportSchema,'Report')
 
-//
+//通行记录人员
 const Travelrecord = new mongoose.Schema({
    time:String,//通行时间
    name:String,//姓名
@@ -130,8 +130,6 @@ const Travelrecord = new mongoose.Schema({
    type:String,//类型
    address:String,//地址
    img:String,//照片
-   status:Boolean,//状态
-   roal:String,//角色
    JtAddress:String,//具体地址
 })
 const TravelrecordModel = mongoose.model('Travelrecord',Travelrecord,'Travelrecord')

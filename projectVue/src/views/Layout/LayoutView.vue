@@ -24,14 +24,11 @@
                     <el-menu-item v-for="(item, index) in arr" :key="index" :index="`1-${index + 1}`">
                       <router-link :to="item.url">{{ item.name }}</router-link>
                     </el-menu-item>
-
                   </el-sub-menu>
                 </el-menu>
               </el-col>
             </el-row>
           </div>
-
-
         </el-aside>
         <el-main>
           <router-view></router-view>
