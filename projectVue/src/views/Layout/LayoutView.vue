@@ -197,20 +197,20 @@ const handleOpen = (key: string, keyPath: string[]) => {
 const handleClose = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)
 }
-let arr1 = []
-let arr2 = []
-let arr3 = []
-let arr4 = []
-let arr5 = []
-let arr6 = []
-let arr7 = []
-let arr8 = []
-let arr9 = []
-let arr10 = []
-let arr11 = []
-let arr12 = []
-let arr13 = []
-let arr14 = []
+let arr1:any = []
+let arr2:any = []
+let arr3:any = []
+let arr4:any = []
+let arr5:any = []
+let arr6:any = []
+let arr7:any = []
+let arr8:any = []
+let arr9:any = []
+let arr10:any = []
+let arr11:any = []
+let arr12:any = []
+let arr13:any = []
+let arr14:any= []
 function getUser() {
   axios.get('/userinfo').then(res => {
     console.log(res.data.arr);
