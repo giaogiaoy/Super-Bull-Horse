@@ -574,9 +574,7 @@ router.post("/phone", async (req, res) => {
 //登录
 router.post("/login", async (req, res) => {
   let { phone, code, pwd } = req.body;
-  console.log(req.body);
-
-  
+  console.log(req.body);  
   let accessToken = jwt.sign({ phone }, '123456', { expiresIn: '3h' });
   let refreshToken = jwt.sign({ phone }, '123456', { expiresIn: '7d' });
   res.send({
@@ -589,6 +587,8 @@ router.post("/login", async (req, res) => {
 router.get("/userinfo", async (req, res) => {
  let accesstoken = req.headers.accesstoken
  let token = jwt.verify(accesstoken,'123456')
+ console.log(token.phone);
+ 
  try{
   let data = await yonghumodel.findOne({ phone:token.phone }).populate('role_id')
   console.log(data.role_id);
@@ -602,7 +602,8 @@ router.get("/userinfo", async (req, res) => {
          arr.push(a)
       }
   }
-
+  console.log(arr);
+  
   res.send({
     code:200,
     msg:'获取用户信息成功',

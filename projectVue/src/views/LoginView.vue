@@ -89,6 +89,9 @@ const handleLogin = () => {
   }
   // TODO: 实现登录逻辑
 }
+const logingitee = ()=>{
+  window.location.href='https://gitee.com/oauth/authorize?client_id=7e7378a9dda1704fcd98fbbf0b513eedfd069f6f7aa209b4ffbfb6184b54c7f1&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Flayout&response_type=code'
+}
 </script>
 
 <template>
@@ -160,6 +163,7 @@ const handleLogin = () => {
             </label>
           </div>
           <button class="login-btn" @click="handleLogin">登录</button>
+          <p @click="logingitee()">使用gitee登录</p>
         </div>
       </div>
     </div>

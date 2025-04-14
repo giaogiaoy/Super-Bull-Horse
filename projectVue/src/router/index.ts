@@ -68,6 +68,11 @@ const router = createRouter({
           path: '/layout/buildingmanage', // 建筑管理
           name: 'BuildingManage',
           component: () => import('@/views/Layout/BuildingManage/BuildingView.vue'),
+        },
+        {
+          path:"/layout/userchange",
+          name:"userchange",
+          component:()=>import("@/views/Layout/userchange/Userchange.vue")
         }
       ]
     }
