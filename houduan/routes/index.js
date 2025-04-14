@@ -229,7 +229,7 @@ router.post("/verify", async (req, res) => {
 
 // 分片上传接口
 router.post(
-  "/upload",
+  "/uploadactive",
   express.urlencoded({ extended: true }),
   upload.single("file"),
   async (req, res) => {
@@ -574,7 +574,8 @@ router.post("/phone", async (req, res) => {
 //登录
 router.post("/login", async (req, res) => {
   let { phone, code, pwd } = req.body;
-  console.log(req.body);  
+
+  
   let accessToken = jwt.sign({ phone }, '123456', { expiresIn: '3h' });
   let refreshToken = jwt.sign({ phone }, '123456', { expiresIn: '7d' });
   res.send({
@@ -624,3 +625,4 @@ router.get("/getusers",async(req,res)=>{
 })
 
 module.exports = router;
+ 
