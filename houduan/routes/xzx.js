@@ -8,6 +8,7 @@ var {
   juesemodel,
   luyoumodel,
   yonghumodel,
+  PayModel
 } = require("../MGdb/mgdb");
 const path = require("path");
 const fs = require("fs-extra");
@@ -52,5 +53,21 @@ router.get("/xq", async (req, res) => {
     data: data,
   });
 });
-
+//渲染费用情况
+router.get('/pay',async(req,res)=>{
+  let sou = {}
+  let MainAddress = req.query.MainAddress
+  let SubAddress = req.query.SubAddress
+  if(MainAddress){
+    sou.MainAddress = new RegExp(MainAddress)
+  }
+  if(SubAddress){
+    sou.SubAddress = new RegExp(SubAddress)
+  }
+  let data = await PayModel.find(sou)
+  res.send({
+    code:200,
+    data:data
+  })
+})
 module.exports = router;

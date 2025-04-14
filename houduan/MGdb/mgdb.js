@@ -157,7 +157,23 @@ const TravelrecordModel = mongoose.model(
   Travelrecord,
   "Travelrecord"
 );
+//缴费表
+const PaySchema = new mongoose.Schema({
+  MainAddress: String, //主地址
+  SubAddress: String, //子地址
+  name: String, //姓名
+  person:String,//缴费人
+  phone: String, //手机号
+  ID: String, //身份证号
+  time: Date, //缴费时间
+  Money:String//该缴费金额
+})
 
+const PayModel = mongoose.model("Pay", PaySchema, "Pay");
+const FinishPaySchema  = new mongoose.Schema({
+  
+})
+const FinishModel = mongoose.model('finish',FinishPaySchema,'finish')
 module.exports = {
   CAModel,
   juesemodel,
@@ -166,4 +182,6 @@ module.exports = {
   peopleModel,
   ReportModel,
   TravelrecordModel,
+  PayModel,
+  FinishModel,
 };
