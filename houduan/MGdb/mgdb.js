@@ -132,7 +132,21 @@ const Travelrecord = new mongoose.Schema({
    img:String,//照片
    status:Boolean,//状态
    roal:String,//角色
-   JtAddress:String,//具体地址
+   JtAddress:Object,//具体地址
+   passStart:String,//通行开始时间
+   passEnd:String,//通行结束时间
+   isUse:{
+    type:Boolean,
+    default:true
+   },//是否使用
+  totalCount: Number, // 总通行次数,
+  remainingCount: Number, // 剩余通行次数,
+  enterNum: Number, // 进入次数,
+  outerNum: Number, // 出去次数,
+  limitNum: Number, // 限制次数,
+  QRCodeDesc:String,//二维码描述
+  QRCode:String,//二维码
+
 })
 const TravelrecordModel = mongoose.model('Travelrecord',Travelrecord,'Travelrecord')
 

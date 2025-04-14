@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted, watchEffect, onBeforeUnmount, shallowRef } from 'vue'
-import axios from 'axios'
-axios.defaults.baseURL = 'http://localhost:3000'
-import { useRoute, useRouter } from 'vue-router'
-let router = useRouter()
-let route = useRoute()
+import axios from '@/instance/axios'
 import dayjs from 'dayjs'
 import { ElMessage, ElMessageBox } from 'element-plus'
 // @ts-ignore 忽略类型检查以解决模块声明文件问题
@@ -123,21 +119,7 @@ let getCAList = async () => {
     NowPage.total = res.data.total
   }
 }
-let getCAList1 = async () => {
-  let params = {
-    page: NowPage.page,
-    size: NowPage.size,
-    activename: activename.value,
-    singupstate: singupstate.value,
-    activestate: activestate.value,
-    reviewstate: reviewstate.value
-  }
-  let res = await axios.get('/getCAlist', { params })
-  if (res.data.code === 200) {
-    CAList.value = res.data.data
-    NowPage.total = res.data.total
-  }
-}
+
 //页面挂载
 onMounted(() => {
   getCAList()

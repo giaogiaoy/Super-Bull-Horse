@@ -29,6 +29,11 @@ const router = createRouter({
           component: () => import('@/views/Layout/Content Management/CommunityActivities.vue'),
         },
         {
+          path: '/layout/setpass',  //社区活动
+          name: 'setpass',
+          component: () => import('@/views/Layout/Content Management/SetPass.vue'),
+        },
+        {
           path: '/layout/video',   //人员关怀'
           name: 'video',
           component: () => import('@/views/Layout/Videosurveillance/VideoView.vue'),
