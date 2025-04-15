@@ -9,7 +9,6 @@
     }
   ],
   "compilerOptions": {
-<<<<<<< HEAD
     "target": "esnext",
     "module": "esnext",
     "strict": true,
@@ -51,12 +50,3 @@
     "experimentalDisableTemplateSupport": false
   }
 }
-=======
-    "typeRoots": ["./node_modules/@types/", "./src/types/"],
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
-}
->>>>>>> ManagementPlatform-Develop

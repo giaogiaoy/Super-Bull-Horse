@@ -40,7 +40,6 @@
           <el-button type="primary" @click="dialogVisible = true" style="width: 120px;">一键重置</el-button>
       </el-tab-pane>
     </el-tabs>
-吧
     <div class="video-page-bodys">
       <el-table :data="tableData" border style="width: 100%">
         <el-table-column type="selection" />

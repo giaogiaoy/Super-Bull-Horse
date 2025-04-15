@@ -24,9 +24,6 @@ const router = createRouter({
       component: () => import('@/views/Layout/LayoutView.vue'),
       redirect: '/layout/homeChildren1',
       children: [
-<<<<<<< HEAD
-
-=======
         {
           path: '/layout/communityactivities',  //社区活动
           name: 'communityactivities',
@@ -62,7 +59,6 @@ const router = createRouter({
           name: "quanxianguanli",
           component: () => import('@/views/Layout/quanxianguanli/quanxianguanli.vue'),
         },
->>>>>>> ManagementPlatform-Develop
         {
           path: '/layout/homeChildren1', //工作台
           name: 'HomeView',
@@ -82,6 +78,12 @@ const router = createRouter({
           path:"/layout/userchange",
           name:"userchange",
           component:()=>import("@/views/Layout/userchange/Userchange.vue")
+
+        },
+        {
+          path: '/layout/payment', // 支付管理
+          name: 'Payment',
+          component: () => import('@/views/Layout/PaymentManagement/PaymentView.vue'),
         }
       ]
     }

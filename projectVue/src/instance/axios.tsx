@@ -11,15 +11,6 @@ const http: AxiosInstance = axios.create({
 // 添加请求拦截器
 http.interceptors.request.use((config: AxiosRequestConfig) => {
     // 对token进行处理
-<<<<<<< HEAD
-    const accessToken = localStorage.getItem('accessToken');
-    const refreshToken = localStorage.getItem('refreshToken');
-    if (accessToken) {
-        config.headers!.Authorization = accessToken;
-    }
-    if (refreshToken) {
-        config.headers!.pass = refreshToken;
-=======
     const accessToken = localStorage.getItem('AccessToken');
     const refreshToken = localStorage.getItem('RefreshToken');
     if (accessToken) {
@@ -27,7 +18,6 @@ http.interceptors.request.use((config: AxiosRequestConfig) => {
     }
     if (refreshToken) {
         config.headers!.RefreshToken = refreshToken;
->>>>>>> ManagementPlatform-Develop
     }
 
     // 在发送请求之前做些什么
@@ -41,17 +31,9 @@ http.interceptors.request.use((config: AxiosRequestConfig) => {
 
 // 添加响应拦截器
 http.interceptors.response.use((response: AxiosResponse) => {
-<<<<<<< HEAD
-    console.log(response.data);
-
-    // 2xx 范围内的状态码都会触发该函数。
-    // 对响应数据做点什么
-    return response.data;
-=======
     // 2xx 范围内的状态码都会触发该函数。
     // 对响应数据做点什么
     return response;
->>>>>>> ManagementPlatform-Develop
 }, async (error: AxiosError) => {
     console.log(error.response);
 
@@ -65,11 +47,7 @@ http.interceptors.response.use((response: AxiosResponse) => {
             localStorage.setItem('refreshToken', refreshToken);
 
             originalRequest.headers!.Authorization = accessToken;
-<<<<<<< HEAD
-            originalRequest.headers!.pass = refreshToken;
-=======
             originalRequest.headers!.RefreshToken = refreshToken;
->>>>>>> ManagementPlatform-Develop
             return http(originalRequest);
         } catch (error) {
             console.log('请重新登录'); // 打印提示信息
