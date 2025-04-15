@@ -26,13 +26,24 @@ import '../src/views/Layout/Screen/styles/all.less'
 import ElementPlus from 'element-plus'  // 引入完整版 Element Plus
 import 'element-plus/dist/index.css'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs' // 引入中文包
-import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
+
+// import VueAmazingUI from 'vue-amazing-ui'
+import 'vue-amazing-ui/css'
+// import VueAmazingUI from 'vue-amazing-ui'
+import 'vue-amazing-ui/css'
 
 import App from './App.vue'
 import router from './router'
+// 导入 ElementPlus 和相关配置
+import 'element-plus/dist/index.css'
+// import zhCn from 'element-plus/es/locale/lang/zh-cn' // 导入中文语言包
+import * as ElementPlusIconsVue from '@element-plus/icons-vue' // 导入 Element Plus 图标
+
+// 如果你需要使用 VueAmazingUI，取消注释并确保它已安装
 // import VueAmazingUI from 'vue-amazing-ui'
-import 'vue-amazing-ui/css'
+// import 'vue-amazing-ui/css'
+
 const app = createApp(App)
 
 // 注册 Element Plus 图标
@@ -46,6 +57,8 @@ app.use(router)
 app.use(ElementPlus,{
   locale: zhCn // 配置中文
 })
+// app.use(VueAmazingUI)
+app.use(ElementPlus)
 
 // 配置 Element Plus，传入中文语言包
 // app.use(ElementPlus, {

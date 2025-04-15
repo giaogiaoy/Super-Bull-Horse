@@ -6,8 +6,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import UploadView from '../../../components/UploadView.vue'
 import ActiveMap from '../../../components/ActiveMap.vue'
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
-import AMapLoader from '@amap/amap-jsapi-loader'
-// @ts-ignore 忽略类型检查以解决模块声明文件问题
+// import AMapLoader from '@amap/amap-jsapi-loader'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 
 // 编辑器实例，必须用 shallowRef
