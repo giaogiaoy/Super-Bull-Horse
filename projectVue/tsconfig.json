@@ -9,7 +9,6 @@
     }
   ],
   "compilerOptions": {
-<<<<<<< HEAD
     "target": "esnext",
     "module": "esnext",
     "strict": true,
@@ -49,14 +48,9 @@
   "vueCompilerOptions": {
     "target": 3.3,
     "experimentalDisableTemplateSupport": false
-  }
+  },
+  "typeRoots": [
+    "./node_modules/@types/",
+    "./src/types/"
+  ]
 }
-=======
-    "typeRoots": ["./node_modules/@types/", "./src/types/"],
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
-}
->>>>>>> ManagementPlatform-Develop
