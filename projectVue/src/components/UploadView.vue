@@ -154,7 +154,11 @@ const handleUpload = async (uploadFile: UploadFile) => {
             //   total: chunks,
             // })
 
+<<<<<<< HEAD
             const response = await axios.post('/upload', formData, {
+=======
+            const response = await axios.post('/uploadactive', formData, {
+>>>>>>> ManagementPlatform-Develop
               signal: uploadController.value?.signal,
               onUploadProgress: (progressEvent) => {
                 if (uploadStatus.isPaused) return

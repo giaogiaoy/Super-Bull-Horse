@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import axios from "@/instance/axios";
 import * as echarts from "echarts/core"; // 推荐按需引入
 import { PieChart } from "echarts/charts";
 import { TooltipComponent, LegendComponent, GridComponent } from "echarts/components";
@@ -116,6 +117,14 @@ const images = ref<CarouselImage[]>([
 function clickImage(image: CarouselImage) {
   console.log("image", image);
 }
+let arr = []
+let names = ""
+axios.get('/userinfo').then(res => {
+    console.log(res.data.data.name);
+    arr = res.data.arr
+    names = res.data.data.name
+  })
+
 </script>
 
 <template>
@@ -128,7 +137,7 @@ function clickImage(image: CarouselImage) {
       <!-- 用户信息 -->
       <div class="user-info">
         <!-- 用户名（或其它标题） -->
-        <div class="user-name">平台方（物联网设备）</div>
+        <div class="user-name">{{ names }}</div>
         <!-- 统计信息 -->
         <div class="user-stats">
           <span>系统工作人员 <em>6</em></span>

@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted, watchEffect, onBeforeUnmount, shallowRef } from 'vue'
+<<<<<<< HEAD
 import axios from 'axios'
 axios.defaults.baseURL = 'http://localhost:3000'
 import { useRoute, useRouter } from 'vue-router'
 let router = useRouter()
 let route = useRoute()
+=======
+import axios from '@/instance/axios'
+>>>>>>> ManagementPlatform-Develop
 import dayjs from 'dayjs'
 import { ElMessage, ElMessageBox } from 'element-plus'
 // @ts-ignore 忽略类型检查以解决模块声明文件问题
@@ -123,6 +127,7 @@ let getCAList = async () => {
     NowPage.total = res.data.total
   }
 }
+<<<<<<< HEAD
 let getCAList1 = async () => {
   let params = {
     page: NowPage.page,
@@ -138,6 +143,9 @@ let getCAList1 = async () => {
     NowPage.total = res.data.total
   }
 }
+=======
+
+>>>>>>> ManagementPlatform-Develop
 //页面挂载
 onMounted(() => {
   getCAList()
@@ -822,6 +830,37 @@ const open = (row: any) => {
   box-shadow: 0 5px 12px 0 rgba(0, 0, 0, 0.1);
   height: 70vh;
   padding: 15px 15px;
+<<<<<<< HEAD
+=======
+}
+.communityactivities .el-tag {
+  padding: 0 9px;
+}
+.communityactivities .el-pagination {
+  position: absolute;
+  right: 10px;
+  margin-top: 50px;
+}
+.communityactivities .el-dialog .el-button {
+  padding: 0 9px;
+}
+.communityactivities .el-form-item {
+  margin-bottom: 10px;
+}
+.ActiveDesc {
+  padding: 10px 20px;
+}
+.ActiveDesc .activedesc-item {
+  display: flex;
+  margin: 10px 0;
+}
+.ActiveDesc .activedesc-item .el-image {
+  width: 200px;
+}
+.activedesc-item h4 {
+  width: 80px;
+  text-align: right;
+>>>>>>> ManagementPlatform-Develop
 }
 .communityactivities .el-tag {
   padding: 0 9px;
