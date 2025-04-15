@@ -10,17 +10,6 @@ const http: AxiosInstance = axios.create({
 
 // 添加请求拦截器
 http.interceptors.request.use((config: AxiosRequestConfig) => {
-<<<<<<< HEAD
-    // 对token进行处理
-    const accessToken = localStorage.getItem('AccessToken');
-    const refreshToken = localStorage.getItem('RefreshToken');
-    if (accessToken) {
-        config.headers!.AccessToken = accessToken;
-    }
-    if (refreshToken) {
-        config.headers!.RefreshToken = refreshToken;
-    }
-=======
   // 对token进行处理
   const accessToken = localStorage.getItem('accessToken');
   const refreshToken = localStorage.getItem('refreshToken');
@@ -28,9 +17,8 @@ http.interceptors.request.use((config: AxiosRequestConfig) => {
     config.headers!.Authorization = accessToken;
   }
   if (refreshToken) {
-    config.headers!.pass = refreshToken;
+    config.headers!.RefreshToken = refreshToken;
   }
->>>>>>> 03126b5cc5539eb4f66d2d109870c31fc22ea5b1
 
   // 在发送请求之前做些什么
   console.log(config);
@@ -43,17 +31,11 @@ http.interceptors.request.use((config: AxiosRequestConfig) => {
 
 // 添加响应拦截器
 http.interceptors.response.use((response: AxiosResponse) => {
-<<<<<<< HEAD
-    // 2xx 范围内的状态码都会触发该函数。
-    // 对响应数据做点什么
-    return response;
-=======
   console.log(response.data);
 
   // 2xx 范围内的状态码都会触发该函数。
   // 对响应数据做点什么
-  return response.data;
->>>>>>> 03126b5cc5539eb4f66d2d109870c31fc22ea5b1
+  return response;
 }, async (error: AxiosError) => {
   console.log(error.response);
 
@@ -66,24 +48,13 @@ http.interceptors.response.use((response: AxiosResponse) => {
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
 
-<<<<<<< HEAD
-            originalRequest.headers!.Authorization = accessToken;
-            originalRequest.headers!.RefreshToken = refreshToken;
-            return http(originalRequest);
-        } catch (error) {
-            console.log('请重新登录'); // 打印提示信息
-            window.location.href = '/login'; // 跳转到登录页面
-            return Promise.reject(error);
-        }
-=======
       originalRequest.headers!.Authorization = accessToken;
-      originalRequest.headers!.pass = refreshToken;
+      originalRequest.headers!.RefreshToken = refreshToken;
       return http(originalRequest);
     } catch (error) {
       console.log('请重新登录'); // 打印提示信息
       window.location.href = '/login'; // 跳转到登录页面
       return Promise.reject(error);
->>>>>>> 03126b5cc5539eb4f66d2d109870c31fc22ea5b1
     }
   }
   console.log(error);

@@ -1,17 +1,8 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted, watchEffect, onBeforeUnmount, shallowRef } from 'vue'
-<<<<<<< HEAD
 import axios from '@/instance/axios'
-=======
-import axios from 'axios'
-axios.defaults.baseURL = 'http://localhost:3000'
-import { useRoute, useRouter } from 'vue-router'
-let router = useRouter()
-let route = useRoute()
->>>>>>> 03126b5cc5539eb4f66d2d109870c31fc22ea5b1
 import dayjs from 'dayjs'
 import { ElMessage, ElMessageBox } from 'element-plus'
-// @ts-ignore 忽略类型检查以解决模块声明文件问题
 import UploadView from '../../../components/UploadView.vue'
 import ActiveMap from '../../../components/ActiveMap.vue'
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
@@ -76,7 +67,7 @@ onBeforeUnmount(() => {
   editor.destroy()
 })
 
-const handleCreated = (editor: any) => {
+const handleCreated = (editor: Editor) => {
   editorRef.value = editor // 记录 editor 实例，重要！
    // 监听全屏状态变化
    editor.on('fullScreen', () => {
@@ -127,24 +118,6 @@ let getCAList = async () => {
     NowPage.total = res.data.total
   }
 }
-<<<<<<< HEAD
-=======
-let getCAList1 = async () => {
-  let params = {
-    page: NowPage.page,
-    size: NowPage.size,
-    activename: activename.value,
-    singupstate: singupstate.value,
-    activestate: activestate.value,
-    reviewstate: reviewstate.value
-  }
-  let res = await axios.get('/getCAlist', { params })
-  if (res.data.code === 200) {
-    CAList.value = res.data.data
-    NowPage.total = res.data.total
-  }
-}
->>>>>>> 03126b5cc5539eb4f66d2d109870c31fc22ea5b1
 //页面挂载
 onMounted(() => {
   getCAList()
