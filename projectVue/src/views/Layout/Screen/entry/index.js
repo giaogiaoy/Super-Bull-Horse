@@ -2,24 +2,24 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { CSS2DRenderer } from "three/examples/jsm/renderers/CSS2DRenderer";
 
-import { loadManager } from "@/model/loadManager";
+import { loadManager } from "../model/loadManager";
 // 城市类
-import { City } from "@/model/City";
+import { City } from "../model/City";
 // 游船类
-import { Ship } from "@/model/Ship";
+import { Ship } from "../model/Ship";
 // 天空背景类
-import { Sky } from "@/environment/Sky";
+import { Sky } from "../environment/Sky";
 // 动态管理类
 import { EffectManager } from "../utils/EffectManager";
 // 光线投射管理类
 import { ClickHandler } from "../utils/ClickHandler";
 // 飞行器
-import { Fly } from "@/model/Fly";
+import { Fly } from "../model/Fly";
 // 事件总线
-import { EventBus } from "@/utils/EventBus";
+import { EventBus } from "../utils/EventBus";
 // 数据管理类
-import { DataManager } from "@/utils/DataManager";
-import { modifySelectCityMaterial } from "@/shader/modifyCityMaterial";
+import { DataManager } from "../utils/DataManager";
+import { modifySelectCityMaterial } from "../shader/modifyCityMaterial";
 
 let scene, camera, renderer, control, css2Renderer;
 
@@ -53,10 +53,6 @@ function init() {
   // 轨道控制器
   control = new OrbitControls(camera, renderer.domElement);
   control.update();
-
-  // 坐标轴
-  const axesHelper = new THREE.AxesHelper(1500);
-  // scene.add(axesHelper)
 }
 
 // 渲染循环
@@ -76,7 +72,7 @@ function createLight() {
   // 基础光-环境光
   const ambientLight = new THREE.AmbientLight("#fff", 3);
   scene.add(ambientLight);
-} 
+}
 
 // 适配
 window.addEventListener("resize", function () {
@@ -95,7 +91,7 @@ window.addEventListener("DOMContentLoaded", function () {
   ClickHandler.getInstance().init(camera);
 
   // 初始化天空背景
-  new Sky(scene).setBack("textures/sky/", [
+  new Sky(scene).setBack("/textures/sky/", [
     "px.jpg",
     "nx.jpg",
     "py.jpg",
@@ -104,9 +100,9 @@ window.addEventListener("DOMContentLoaded", function () {
     "nz.jpg",
   ]);
 
-  loadManager(["fbx/city.fbx", "gltf/ship.glb"], (modelList) => {
+  loadManager(["/fbx/city.fbx", "/gltf/ship.glb"], (modelList) => {
     modelList.forEach(async (obj) => {
-      if (obj.url === "fbx/city.fbx") {
+      if (obj.url === "/fbx/city.fbx") {
         const city = new City(obj.model, scene, camera, control);
 
         // 接收默认数据和更新数据
@@ -140,12 +136,14 @@ window.addEventListener("DOMContentLoaded", function () {
 
         // 监听自定义刷新数据事件，实现火灾标记切换
         EventBus.getInstance().on("refreshHomeCount", (data) => {
-          const buildName = data.fireBuilding.name;
+          // 使用可选链操作符和空值合并操作符
+          const buildName =
+            data?.fireBuilding?.name || "01-shanghaizhongxindasha";
           if (buildName) {
             city.initFire(buildName);
           }
         });
-      } else if (obj.url === "gltf/ship.glb") {
+      } else if (obj.url === "/gltf/ship.glb") {
         const ship = new Ship(obj.model, scene, camera, control);
         ship.model.position.set(150, 0, -80);
         ship.model.rotation.set(0, -Math.PI / 2, 0);

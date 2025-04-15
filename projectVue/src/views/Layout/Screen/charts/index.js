@@ -1,6 +1,5 @@
 import * as echarts from 'echarts'
-import { EventBus } from '@/utils/eventBus'
-import { DataManager } from '@/utils/DataManager'
+import { EventBus } from '../utils/EventBus'
 import gsap from 'gsap'
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -14,14 +13,33 @@ window.addEventListener('DOMContentLoaded', () => {
 
   async function initChart() {
     // 获取默认数据
-    let dataJson = await DataManager.getInstance().getData()
+    // let dataJson = await DataManager.getInstance().getData()
 
-    // 解构需要的数据
-    const {
-      parkIncome: { yIncome },
-      parkIndustry,
-      base,
-    } = dataJson
+    // 添加默认数据和错误处理
+    // const defaultData = {
+    //   parkIncome: {
+    //     yIncome: [100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320]
+    //   },
+    //   parkIndustry: [
+    //     { value: 20, name: '素质教育' },
+    //     { value: 20, name: '医疗健康' },
+    //     { value: 20, name: '生活服务' },
+    //     { value: 20, name: '商业娱乐' },
+    //     { value: 20, name: '其他' }
+    //   ]
+    // }
+
+    // // 使用解构赋值时提供默认值
+    // const {
+    //   parkIncome: { yIncome } = defaultData.parkIncome,
+    //   parkIndustry = defaultData.parkIndustry,
+    // } = dataJson || defaultData
+
+    // // 解构需要的数据
+    // const {
+    //   parkIncome: { yIncome },
+    //   parkIndustry,
+    // } = dataJson
 
     // ECharts 配置项
     const barOption = {
@@ -47,18 +65,18 @@ window.addEventListener('DOMContentLoaded', () => {
             show: false,
           },
           data: [
-            "6月",
-            "7月",
-            "8月",
-            "9月",
-            "10月",
-            "11月",
-            "12月",
-            "1月",
-            "2月",
-            "3月",
-            "4月",
-            "5月"
+            '6月',
+            '7月',
+            '8月',
+            '9月',
+            '10月',
+            '11月',
+            '12月',
+            '1月',
+            '2月',
+            '3月',
+            '4月',
+            '5月',
           ],
         },
       ],
@@ -75,29 +93,28 @@ window.addEventListener('DOMContentLoaded', () => {
           name: '居民收入情况',
           type: 'bar',
           barWidth: '10px',
-          data: yIncome.map((item, index) => {
-            const color =
-              index % 2 === 0
-                ? new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                  { offset: 0.23, color: '#74c0f8' },
-                  { offset: 1, color: 'rgba(116,192,248,0.00)' },
-                ])
-                : new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                  { offset: 0.23, color: '#ff7152' },
-                  { offset: 1, color: 'rgba(255,113,82,0.00)' },
-                ]);
-            return { value: item, itemStyle: { color } };
-          }),
+          // data: yIncome.map((item, index) => {
+          //   const color =
+          //     index % 2 === 0
+          //       ? new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          //         { offset: 0.23, color: '#74c0f8' },
+          //         { offset: 1, color: 'rgba(116,192,248,0.00)' },
+          //       ])
+          //       : new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          //         { offset: 0.23, color: '#ff7152' },
+          //         { offset: 1, color: 'rgba(255,113,82,0.00)' },
+          //       ]);
+          //   return { value: item, itemStyle: { color } };
+          // }),
         },
       ],
       textStyle: {
         color: '#B4C0CC',
       },
-    };
+    }
 
     const pieOption = {
-      color: [
-        '#00B2FF', '#2CF2FF', '#892CFF', '#FF624D', '#FFCF54', '#86ECA2'],
+      color: ['#00B2FF', '#2CF2FF', '#892CFF', '#FF624D', '#FFCF54', '#86ECA2'],
       legend: {
         itemGap: 20,
         bottom: '0',
@@ -109,7 +126,7 @@ window.addEventListener('DOMContentLoaded', () => {
         },
       },
       tooltip: {
-        trigger: 'item'
+        trigger: 'item',
       },
       series: [
         {
@@ -120,49 +137,48 @@ window.addEventListener('DOMContentLoaded', () => {
           tooltip: {
             trigger: 'item',
             formatter: (params) => {
-              return `${params.seriesName}</br><div style='display:flex;justify-content: space-between;'><div>${params.marker}${params.name}</div><div>${params.percent}%</div></div>`;
-
-            }
+              return `${params.seriesName}</br><div style='display:flex;justify-content: space-between;'><div>${params.marker}${params.name}</div><div>${params.percent}%</div></div>`
+            },
           },
           label: {
             show: false,
             position: 'center',
           },
-          data: parkIndustry,
+          // data: parkIndustry,
         },
       ],
-    };
+    }
 
     // 给图表设置配置项
-    myBarChart.setOption(barOption);
-    myPieChart.setOption(pieOption);
+    myBarChart.setOption(barOption)
+    myPieChart.setOption(pieOption)
 
     // 饼状图-点击事件
-    myPieChart.on('click', function (param) { 
+    myPieChart.on('click', function (param) {
       // 0 素质教育
-      // 1 医疗健康  
+      // 1 医疗健康
       // 2 生活服务
       // 3 商业娱乐
       // 4 其他
       if (param.dataIndex == 0) {
-        EventBus.getInstance().emit('pieClick', "Shanghai-02")
+        EventBus.getInstance().emit('pieClick', 'Shanghai-02')
       } else if (param.dataIndex == 1) {
-        EventBus.getInstance().emit('pieClick', "Shanghai-03")
+        EventBus.getInstance().emit('pieClick', 'Shanghai-03')
       } else if (param.dataIndex == 2) {
-        EventBus.getInstance().emit('pieClick', "Shanghai-04")
+        EventBus.getInstance().emit('pieClick', 'Shanghai-04')
       } else if (param.dataIndex == 3) {
-        EventBus.getInstance().emit('pieClick', "Shanghai-05")
+        EventBus.getInstance().emit('pieClick', 'Shanghai-05')
       } else if (param.dataIndex == 4) {
-        EventBus.getInstance().emit('pieClick', "Shanghai-06")
-      } 
+        EventBus.getInstance().emit('pieClick', 'Shanghai-06')
+      }
       // 07 模型暂时没用上
-    });
+    })
 
     // ECharts 适配
     window.addEventListener('resize', function () {
-      myPieChart.resize();
-      myBarChart.resize();
-    });
+      myPieChart.resize()
+      myBarChart.resize()
+    })
   }
 
   // 更新左上角-城市概况数据
@@ -176,42 +192,48 @@ window.addEventListener('DOMContentLoaded', () => {
       const { buildingTotal, chargePoleTotal, enterpriseTotal, parkingTotal } = data.base
       gsap.to('#building-number', {
         duration: 1,
-        innerText: function () { return buildingTotal.toFixed(0) },
+        innerText: function () {
+          return buildingTotal.toFixed(0)
+        },
         transformOrigin: 'center bottom',
         onUpdate: function () {
-          let n = (gsap.getProperty(this.targets()[0], "innerText"));
+          let n = gsap.getProperty(this.targets()[0], 'innerText')
           this.targets()[0].innerText = n.toFixed(0)
         },
       })
       gsap.to('#enterprise-number', {
         duration: 1,
-        innerText: function () { return chargePoleTotal.toFixed(0) },
+        innerText: function () {
+          return chargePoleTotal.toFixed(0)
+        },
         transformOrigin: 'center bottom',
         onUpdate: function () {
-          let n = (gsap.getProperty(this.targets()[0], "innerText"));
+          let n = gsap.getProperty(this.targets()[0], 'innerText')
           this.targets()[0].innerText = n.toFixed(0)
         },
       })
       gsap.to('#car-number', {
         duration: 1,
-        innerText: function () { return enterpriseTotal.toFixed(0) },
+        innerText: function () {
+          return enterpriseTotal.toFixed(0)
+        },
         transformOrigin: 'center bottom',
         onUpdate: function () {
-          let n = (gsap.getProperty(this.targets()[0], "innerText"));
+          let n = gsap.getProperty(this.targets()[0], 'innerText')
           this.targets()[0].innerText = n.toFixed(0)
         },
       })
       gsap.to('#rod-number', {
         duration: 1,
-        innerText: function () { return parkingTotal.toFixed(0) },
+        innerText: function () {
+          return parkingTotal.toFixed(0)
+        },
         transformOrigin: 'center bottom',
         onUpdate: function () {
-          let n = (gsap.getProperty(this.targets()[0], "innerText"));
+          let n = gsap.getProperty(this.targets()[0], 'innerText')
           this.targets()[0].innerText = n.toFixed(0)
         },
       })
     }
   }
 })
-
-

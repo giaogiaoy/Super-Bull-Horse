@@ -13,17 +13,29 @@ export class EffectManager {
   }
   // 添加要做动效的实例对象
   addObj(obj) {
-    this.list.push(obj)
+    if (obj && typeof obj.onTick === 'function') {
+      this.list.push(obj)
+    } else {
+      console.warn('添加的对象没有onTick方法，无法参与动效')
+    }
   }
   tickForEach(t) {
     // t: 将来渲染循环传过来的毫秒级时间数值
     this.list.forEach(obj => {
-      obj.onTick(t)
+      try {
+        if (obj && typeof obj.onTick === 'function') {
+          obj.onTick(t)
+        }
+      } catch (error) {
+        console.error('动效执行错误:', error)
+      }
     })
   }
   // 移除指定物体，不参与动效
   removeObj(obj) {
     const index = this.list.findIndex(target => target === obj)
-    this.list.splice(index, 1)
+    if (index !== -1) {
+      this.list.splice(index, 1)
+    }
   }
 }

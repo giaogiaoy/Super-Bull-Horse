@@ -5,7 +5,7 @@ import gsap from 'gsap'
 
 const manager = new THREE.LoadingManager()
 
-/** 
+/**
  * 专门加载模型文件=>模型对象
  * @param {*} pathList 模型文件路径数组
  * @param {*} suc 接收成功结果回调函数

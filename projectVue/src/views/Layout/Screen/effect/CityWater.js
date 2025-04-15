@@ -14,16 +14,18 @@ export class CityWater {
     this.model = new Water(
       modelGeo,
       {
-        textureWidth: 512, // 水贴图的宽度
-        textureHeight: 512, // 水贴图的高度（值越大细节越多）
-        waterNormals: new THREE.TextureLoader().load('textures/waternormals.jpg', function (texture) { // 水模型的法线贴图（不同像素点有不同反光效果）
+        textureWidth: 1024, // 水贴图的宽度（提高分辨率）
+        textureHeight: 1024, // 水贴图的高度（提高分辨率）
+        waterNormals: new THREE.TextureLoader().load('/textures/waternormals.jpg', (texture) => {
           // 纹理图片 UV 环绕到目标物体身上的重复方式
-          texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+          texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+          texture.repeat.set(4, 4) // 设置重复次数
         }),
-        sunDirection: new THREE.Vector3(), // 阳光方向
+        sunDirection: new THREE.Vector3(0, 1, 0), // 阳光方向
         sunColor: 0xffffff, // 阳光颜色
-        waterColor: new THREE.Color("#1e90ff"), // 水颜色
-        distortionScale: 4, // 水倒影分散度（值大越分散）
+        waterColor: new THREE.Color("#4488ff"), // 水颜色调整为更鲜明的蓝色
+        distortionScale: 3.5, // 水倒影分散度
+        fog: false // 禁用雾效，提高清晰度
       }
     )
     this.model.rotation.x = -Math.PI / 2 // 默认模型是垂直于 x 轴，所以翻转
@@ -33,6 +35,8 @@ export class CityWater {
   onTick(t) {
     // t的值：渲染循环启动过了多少毫秒时间
     // time 全局参数是 Water 内置好的，我们只需要不断传入新的偏移单位数值即可实现水波纹动态效果
-    this.model.material.uniforms['time'].value = t / 1000
+    if (this.model && this.model.material && this.model.material.uniforms) {
+      this.model.material.uniforms['time'].value = t / 1200 // 降低速度使水面更平静
+    }
   }
 }

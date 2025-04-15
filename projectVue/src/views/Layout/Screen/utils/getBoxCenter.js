@@ -20,5 +20,5 @@ export const getBoxCenter = mesh => {
   return {
     center,
     size
-  } 
+  }
 }

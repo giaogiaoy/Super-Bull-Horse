@@ -23,11 +23,7 @@ const router = createRouter({
       name: 'layout',
       component: () => import('@/views/Layout/LayoutView.vue'),
       children: [
-        {
-          path: '/layout/home', //首页
-          name: 'home',
-          component: () => import('@/views/Layout/Home/Home.vue'),
-        },
+
         {
           path: '/layout/homeChildren1', //工作台
           name: 'HomeView',
