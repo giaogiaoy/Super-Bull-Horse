@@ -3,9 +3,6 @@
   "references": [
     {
       "path": "./tsconfig.node.json"
-    },
-    {
-      "path": "./tsconfig.app.json"
     }
   ],
   "compilerOptions": {
@@ -48,14 +45,5 @@
   "vueCompilerOptions": {
     "target": 3.3,
     "experimentalDisableTemplateSupport": false
-<<<<<<< HEAD
   }
 }
-=======
-  },
-  "typeRoots": [
-    "./node_modules/@types/",
-    "./src/types/"
-  ]
-}
->>>>>>> 03126b5cc5539eb4f66d2d109870c31fc22ea5b1

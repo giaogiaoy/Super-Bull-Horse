@@ -23,7 +23,7 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import '../src/views/Layout/Screen/styles/all.less'
-<<<<<<< HEAD
+
 import ElementPlus from 'element-plus'  // 引入完整版 Element Plus
 import 'element-plus/dist/index.css'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs' // 引入中文包
@@ -34,7 +34,7 @@ import App from './App.vue'
 import router from './router'
 import VueAmazingUI from 'vue-amazing-ui'
 import 'vue-amazing-ui/css'
-=======
+
 import App from './App.vue'
 import router from './router'
 // 导入 ElementPlus 和相关配置
@@ -47,7 +47,6 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue' // 导入 Element
 // import VueAmazingUI from 'vue-amazing-ui'
 // import 'vue-amazing-ui/css'
 
->>>>>>> 03126b5cc5539eb4f66d2d109870c31fc22ea5b1
 const app = createApp(App)
 
 // 注册 Element Plus 图标
@@ -57,15 +56,12 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 
 // 使用 Pinia 状态管理
 app.use(createPinia())
-<<<<<<< HEAD
 app.use(router)
 app.use(ElementPlus,{
   locale: zhCn // 配置中文
 })
 app.use(VueAmazingUI)/
 app.use(ElementPlus)
-=======
->>>>>>> 03126b5cc5539eb4f66d2d109870c31fc22ea5b1
 
 // 配置 Element Plus，传入中文语言包
 app.use(ElementPlus, {
